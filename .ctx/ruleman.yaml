@@ -1,0 +1,6 @@
+project_id: beastforge
+technologies:
+  bash: {}
+export:
+  format: markdown
+  path: _ai/conventions.md
