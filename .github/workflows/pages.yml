@@ -36,6 +36,8 @@ jobs:
         with:
           repository: ${{ github.repository_owner }}/texforge
           path: texforge
+          ssh-key: ${{ secrets.TEXFORGE_DEPLOY_KEY }}
+          persist-credentials: false
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
