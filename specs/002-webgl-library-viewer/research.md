@@ -299,7 +299,7 @@ idempotent re-exports.
 
 Headers on every response: `X-Content-Type-Options: nosniff`, a restrictive CSP
 (`default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:
-blob:; connect-src 'self'; object-src 'none'; base-uri 'none'`), and
+blob:; connect-src 'self' blob:; object-src 'none'; base-uri 'none'`), and
 `Referrer-Policy: no-referrer`. No CORS, no directory listing, no symlink
 following outside the allowlisted root. Path validation rejects `..`, absolute
 paths, backslashes, NULs, and unknown extensions before touching the filesystem.

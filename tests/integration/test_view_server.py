@@ -90,7 +90,9 @@ def test_static_routes_and_security_headers(viewer) -> None:
         assert fragment in body
         assert headers["x-content-type-options"] == "nosniff"
         assert headers["referrer-policy"] == "no-referrer"
-        assert "default-src 'self'" in headers["content-security-policy"]
+        policy = headers["content-security-policy"]
+        assert "default-src 'self'" in policy
+        assert "connect-src 'self' blob:" in policy
         assert headers["cache-control"] == "no-cache"
 
     status, headers, body = _request(server, "GET", "/assets/app.js")

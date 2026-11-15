@@ -49,7 +49,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   environment variables).
 
 ### Fixed
-- None.
+- The published viewer rendered an empty gallery because `three.module.js`
+  imported a `three.core.js` file that was never vendored; the full 0.187.0
+  module split is now shipped.
+- Removed the leftover inline import map, which strict CSP blocked and logged
+  as an error on every load, and added a packaged favicon to avoid a 404.
+- Allowed `blob:` in `connect-src` so `GLTFLoader` can fetch embedded textures
+  from GLB files without CSP violations.
 
 ## [0.1.0] - 2026-11-14
 

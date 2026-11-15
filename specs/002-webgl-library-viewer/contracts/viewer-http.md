@@ -93,7 +93,7 @@ All responses include:
 X-Content-Type-Options: nosniff
 Referrer-Policy: no-referrer
 Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self';
-  img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'
+  img-src 'self' data: blob:; connect-src 'self' blob:; object-src 'none'; base-uri 'none'
 ```
 
 Cache policy:

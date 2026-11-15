@@ -2,6 +2,7 @@ three.js 0.187.0
 Retrieved 2026-11-15 from https://registry.npmjs.org/three/-/three-0.187.0.tgz
 Files:
   three.module.js
+  three.core.js  (required by three.module.js since r167)
   addons/loaders/GLTFLoader.js
   addons/utils/BufferGeometryUtils.js
   addons/utils/SkeletonUtils.js

@@ -26,7 +26,7 @@ from beastforge.viewer.catalog import CatalogDocument, build_catalog, catalog_js
 HOST = "127.0.0.1"
 CSP = (
     "default-src 'self'; script-src 'self'; style-src 'self'; "
-    "img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; "
+    "img-src 'self' data: blob:; connect-src 'self' blob:; object-src 'none'; "
     "base-uri 'none'"
 )
 SECURITY_HEADERS = {

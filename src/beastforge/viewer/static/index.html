@@ -5,18 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self' blob:; object-src 'none'; base-uri 'none'"
     />
     <title>beastforge library</title>
+    <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="./assets/styles.css" />
-    <script type="importmap">
-      {
-        "imports": {
-          "three": "./assets/three/three.module.js",
-          "three/addons/": "./assets/three/addons/"
-        }
-      }
-    </script>
   </head>
   <body>
     <a class="skip-link" href="#gallery">Skip to the gallery</a>
