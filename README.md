@@ -80,7 +80,8 @@ See [docs/development.md](docs/development.md) for setup, golden and showroom
 workflows, and release steps. Architecture is in
 [docs/architecture.md](docs/architecture.md); the machine surface is documented
 in [docs/api.md](docs/api.md); recipe authoring is in
-[docs/recipes.md](docs/recipes.md).
+[docs/recipes.md](docs/recipes.md); the approved frames are browsable in the
+[showroom gallery](docs/showroom-gallery.md).
 
 ## License
 

@@ -62,6 +62,8 @@ manifest.json        # tool version, frame size, tolerance, camera names
 Compare mode renders the current build to a temporary directory and reports the
 current frame paths. It exits `3` on any `fail` or `no-baseline`.
 
+Browse the approved frames in the [showroom gallery](showroom-gallery.md).
+
 Accept mode is the only way references change:
 
 ```bash
