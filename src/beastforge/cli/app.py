@@ -15,6 +15,7 @@ from beastforge.cli.params import params_command
 from beastforge.cli.render import render_command
 from beastforge.cli.showroom import showroom_command
 from beastforge.cli.validate import validate_command
+from beastforge.cli.view import view_command
 from beastforge.model.errors import BeastforgeError
 
 HELP_CONTEXT = {"help_option_names": ["-h", "--help"]}
@@ -73,6 +74,7 @@ app.command("params", context_settings=HELP_CONTEXT)(params_command)
 app.command("render", context_settings=HELP_CONTEXT)(render_command)
 app.command("validate", context_settings=HELP_CONTEXT)(validate_command)
 app.command("showroom", context_settings=HELP_CONTEXT)(showroom_command)
+app.command("view", context_settings=HELP_CONTEXT)(view_command)
 app.command("version", context_settings=HELP_CONTEXT)(version_command)
 app.command("about", context_settings=HELP_CONTEXT)(about_command)
 

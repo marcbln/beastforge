@@ -37,6 +37,23 @@ and commits both files atomically, so an interruption leaves no partial pair.
 Reproducibility: the same recipe, resolved parameters, and tool version produce
 byte-identical files on any machine, directory, locale, or clock.
 
+## Browse and export
+
+```bash
+beastforge view                                   # loopback gallery, browsers open
+beastforge view --no-browser --port 8765          # headless / fixed port
+beastforge view --cache-dir /tmp/beastforge-view  # disposable asset cache
+beastforge view --export site --force --no-browser # static bundle for Pages
+```
+
+The viewer is read-only: it never re-derives gameplay facts, regenerates
+geometry, or applies `--set`. `catalog.json` v1.0 lists every loadable recipe
+with relative `creatures/<name>/<recipeSha256>/...` URLs; the sidecar manifest
+remains authoritative. Generation is lazy and content-addressed, so a recipe
+change produces a new URL and stale requests return HTTP `409 stale-asset`.
+`--json` emits one `ServeReport`/`ExportReport`; progress and warnings go to
+stderr.
+
 ## Read the manifest
 
 The manifest is the gameplay contract. Never read generator source to answer

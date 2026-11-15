@@ -95,6 +95,73 @@ counts), and a `comparison {status, differing_frames[], metrics}`. Status is
 `pass`, `fail`, or `no-baseline`; a failure or missing baseline exits `3`.
 `--accept` rewrites references explicitly.
 
+### `view [--export DIR] --json`
+
+Serve mode emits exactly one document once the socket is bound, then keeps
+serving; progress and warnings stay on stderr:
+
+```json
+{
+  "schema_version": "1",
+  "tool_version": "0.2.0",
+  "status": "ok",
+  "mode": "serve",
+  "url": "http://127.0.0.1:54321/",
+  "cache_dir": "/home/me/.cache/beastforge/viewer",
+  "dry_run": false
+}
+```
+
+`--dry-run` binds nothing and reports `"url": null`. Export mode emits:
+
+```json
+{
+  "schema_version": "1",
+  "tool_version": "0.2.0",
+  "status": "ok",
+  "mode": "export",
+  "output": "site",
+  "creatures": ["ash-crowned-tyrant", "chitter-mite", "elephant", "giraffe", "ridge-stalker"],
+  "files": 47,
+  "warnings": [],
+  "dry_run": false
+}
+```
+
+Exit codes: `0` success/dry-run, `1` IO or `export-exists`, `2` usage, `3`
+gate/generation failure during export, `4` library not found, `130` Ctrl-C.
+
+## Viewer contracts
+
+The viewer adds one discovery document, one build-provenance document, and one
+loopback HTTP surface. Normative contracts:
+
+- [catalog.json](../specs/002-webgl-library-viewer/contracts/catalog.md) and
+  [catalog.schema.json](../specs/002-webgl-library-viewer/contracts/catalog.schema.json)
+- [bundle.json](../specs/002-webgl-library-viewer/contracts/catalog.md#static-bundle-bundlejson)
+  and [bundle.schema.json](../specs/002-webgl-library-viewer/contracts/bundle.schema.json)
+- [viewer HTTP](../specs/002-webgl-library-viewer/contracts/viewer-http.md)
+- [`beastforge view` CLI](../specs/002-webgl-library-viewer/contracts/cli.md)
+
+`catalog.json` is versioned `MAJOR.MINOR`; consumers are major-strict and
+minor-tolerant. It lists every loadable recipe exactly once with
+`creatures/<name>/<recipeSha256>/...` URLs. The sidecar manifest stays the
+authoritative source of creature facts. HTTP errors use the same error document
+shown above, with codes `stale-asset` (409), `recipe-not-found` (404),
+`viewer-asset-failed` (500), `io-failure` (500), and `usage-error` (405).
+
+```text
+GET /                 -> index.html
+GET /assets/**        -> packaged frontend + assets/three/**
+GET /catalog.json     -> current catalog (Cache-Control: no-store)
+GET /creatures/<name>/<sha>/<file>
+GET /healthz          -> {"status":"ok"}
+```
+
+The server binds `127.0.0.1` only and sets a restrictive CSP, `nosniff`, and
+`no-referrer` on every response. `bundle.json` lists every exported file except
+itself, sorted by path, with SHA-256 and byte length.
+
 ## Manifest consumer guide
 
 The sidecar `<name>.manifest.json` is the gameplay contract. Its

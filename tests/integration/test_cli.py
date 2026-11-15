@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 
+from beastforge import __version__
 from tests.conftest import run_cli
 
 
@@ -11,7 +12,7 @@ def test_version_and_about(env) -> None:
     for args in (["version"], ["about"], ["--version"], ["-V"]):
         result = run_cli(args, env)
         assert result.returncode == 0, result.stderr
-        assert "beastforge 0.1.0" in result.stdout
+        assert f"beastforge {__version__}" in result.stdout
 
 
 def test_help_exits_zero(env) -> None:

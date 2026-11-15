@@ -26,6 +26,9 @@ at `../texforge`; override with `BEASTFORGE_TEXFORGE_LIBRARY` or
 | Render one creature | `uv run beastforge render ridge-stalker -o /tmp/out` |
 | Compare showroom | `uv run beastforge showroom` |
 | Accept references | `uv run beastforge showroom --accept` |
+| Browse the library | `uv run beastforge view --no-browser` |
+| Export the static site | `uv run beastforge view --export /tmp/site --no-browser` |
+| Browser smoke (opt-in) | `BEASTFORGE_VIEWER_SMOKE=1 uv run pytest -m viewer tests/viewer -q` |
 
 Tests are layered:
 
@@ -36,6 +39,20 @@ Tests are layered:
 - `tests/defect_corpus/` — one curated mutation per stable finding code.
 - `tests/golden/` — committed `.glb`/manifest SHA-256 values.
 - `tests/consumers/` — `trimesh` loads the skinned GLB.
+- `tests/viewer/` — opt-in Playwright smoke check; skipped unless
+  `BEASTFORGE_VIEWER_SMOKE=1` and the `viewer` dependency group is installed.
+
+The browser smoke check is the only GPU/browser dependency:
+
+```bash
+uv sync --group viewer
+uv run playwright install chromium
+BEASTFORGE_VIEWER_SMOKE=1 uv run pytest -m viewer tests/viewer -q
+```
+
+The default suite stays offline and browser-free. The vendored three.js runtime
+lives under `src/beastforge/viewer/third_party/three/`; upgrade all files and
+`VERSION` together, then rerun the smoke check.
 
 ## Golden hashes
 

@@ -5,9 +5,9 @@ from __future__ import annotations
 import json
 
 import jsonschema
-from tests.conftest import ROOT
 
 from beastforge.showroom.runner import run_showroom
+from tests.conftest import ROOT
 
 
 def _schema() -> dict:

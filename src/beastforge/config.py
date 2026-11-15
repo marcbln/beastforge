@@ -17,6 +17,7 @@ from beastforge.model.errors import IOFailure
 ENV_LIBRARY = "BEASTFORGE_LIBRARY"
 ENV_TEXFORGE_LIBRARY = "BEASTFORGE_TEXFORGE_LIBRARY"
 ENV_OUT = "BEASTFORGE_OUT"
+ENV_CACHE_DIR = "BEASTFORGE_CACHE_DIR"
 PROJECT_CONFIG = ".beastforge.toml"
 
 
@@ -28,6 +29,7 @@ class Settings:
     texforge_library: str | None = None
     output_dir: str = "dist"
     color: str = "auto"
+    cache_dir: str | None = None
     config_path: str | None = None
 
 
@@ -64,7 +66,14 @@ def _read_toml(path: Path) -> dict[str, Any]:
 
 
 def _apply(settings: Settings, data: dict[str, Any], source: str) -> None:
-    known = {"library", "texforge_library", "output_dir", "color", "config_path"}
+    known = {
+        "library",
+        "texforge_library",
+        "output_dir",
+        "color",
+        "cache_dir",
+        "config_path",
+    }
     for key, value in data.items():
         if key not in known:
             raise IOFailure(
@@ -105,6 +114,8 @@ def resolve_settings(
         settings.texforge_library = value
     if (value := env_map.get(ENV_OUT)) is not None:
         settings.output_dir = value
+    if (value := env_map.get(ENV_CACHE_DIR)) is not None:
+        settings.cache_dir = value
     if env_map.get("NO_COLOR") is not None:
         settings.color = "never"
 
@@ -121,6 +132,20 @@ def resolve_settings(
             exit_code=1,
         )
     return settings
+
+
+def default_cache_dir() -> Path:
+    """Return the XDG cache location used when nothing overrides it."""
+    base = os.environ.get("XDG_CACHE_HOME") or str(Path.home() / ".cache")
+    return Path(base) / "beastforge" / "viewer"
+
+
+def resolve_cache_dir(settings: Settings, override: str | None = None) -> Path:
+    """Resolve the viewer cache path: flag > env > config > XDG default."""
+    candidate: str | None = override or os.environ.get(ENV_CACHE_DIR) or settings.cache_dir
+    if candidate:
+        return Path(candidate).expanduser().resolve()
+    return default_cache_dir().expanduser().resolve()
 
 
 def find_library_root(settings: Settings, *, cwd: Path | None = None) -> Path:

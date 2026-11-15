@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://beastforge.dev/schema/catalog.schema.json",
+  "title": "beastforge viewer catalog (catalog.json)",
+  "description": "Canonical index of every loadable library recipe, consumed by the WebGL viewer in both local and static-export modes. Entries are sorted by name, categories are in canonical order, and all URLs are relative to this document. See contracts/catalog.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "toolVersion", "generatedBy", "categories", "creatures", "warnings"],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$",
+      "description": "MAJOR.MINOR catalog contract version. Additive fields bump MINOR; breaking changes bump MAJOR."
+    },
+    "toolVersion": {
+      "type": "string",
+      "minLength": 1,
+      "description": "beastforge __version__ that produced this catalog."
+    },
+    "generatedBy": {
+      "const": "beastforge"
+    },
+    "categories": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "Categories present in creatures, in the canonical order boss, quadruped, swarm, other.",
+      "items": { "$ref": "#/$defs/category" }
+    },
+    "creatures": {
+      "type": "array",
+      "description": "One entry per loadable recipe, sorted by name. Names are unique.",
+      "items": { "$ref": "#/$defs/entry" }
+    },
+    "warnings": {
+      "type": "array",
+      "description": "Non-fatal scan problems, sorted by path. May be empty.",
+      "items": { "$ref": "#/$defs/warning" }
+    }
+  },
+  "$defs": {
+    "category": {
+      "enum": ["boss", "quadruped", "swarm", "other"]
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "category",
+        "description",
+        "tags",
+        "recipeVersion",
+        "testedWith",
+        "recipeSha256",
+        "asset",
+        "manifest"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?$"
+        },
+        "category": { "$ref": "#/$defs/category" },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tags": {
+          "type": "array",
+          "description": "Recipe declaration order; duplicates are preserved if a recipe declares them.",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "recipeVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "testedWith": {
+          "type": "string",
+          "minLength": 1
+        },
+        "recipeSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "SHA-256 of the canonical parsed recipe document; equals manifest.provenance.recipeSha256."
+        },
+        "asset": {
+          "type": "string",
+          "pattern": "^creatures/[^/]+/[0-9a-f]{64}/[^/]+\\.glb$",
+          "description": "Catalog-relative path to the GLB."
+        },
+        "manifest": {
+          "type": "string",
+          "pattern": "^creatures/[^/]+/[0-9a-f]{64}/[^/]+\\.manifest\\.json$",
+          "description": "Catalog-relative path to the sidecar manifest."
+        }
+      }
+    },
+    "warning": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "message"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Project-relative recipe path (never absolute)."
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

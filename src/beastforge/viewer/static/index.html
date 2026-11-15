@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'"
+    />
+    <title>beastforge library</title>
+    <link rel="stylesheet" href="./assets/styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./assets/three/three.module.js",
+          "three/addons/": "./assets/three/addons/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#gallery">Skip to the gallery</a>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">B</span>
+        <span class="brand-name">beastforge</span>
+        <span class="brand-sub">library</span>
+      </div>
+      <div class="filters" role="search">
+        <label class="field">
+          <span>Category</span>
+          <select id="category-filter">
+            <option value="">All categories</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Search</span>
+          <input
+            id="search"
+            type="search"
+            placeholder="Search name, description, tags"
+            autocomplete="off"
+          />
+        </label>
+        <button id="clear-filters" type="button" class="button ghost">Clear filters</button>
+      </div>
+      <p id="match-count" class="match-count" aria-live="polite"></p>
+    </header>
+
+    <div id="compat-banner" class="banner error" role="alert" hidden></div>
+    <div id="warning-banner" class="banner warning" role="status" hidden></div>
+
+    <main id="gallery-view">
+      <section id="gallery" class="gallery" aria-label="Creature gallery"></section>
+      <section id="empty-state" class="empty-state" hidden>
+        <h2>No creatures match</h2>
+        <p>Try a different category or clear the search text.</p>
+        <button id="empty-clear" type="button" class="button">Clear filters</button>
+      </section>
+    </main>
+
+    <main id="stage-view" hidden>
+      <section class="stage-layout">
+        <div class="stage-panel">
+          <div class="stage-toolbar">
+            <button id="back-to-gallery" type="button" class="button ghost">
+              &larr; Gallery
+            </button>
+            <div class="stage-heading">
+              <h1 id="stage-title"></h1>
+              <span id="stage-category" class="pill"></span>
+            </div>
+          </div>
+          <div id="stage-canvas-host" class="stage-canvas-host">
+            <canvas id="stage-canvas"></canvas>
+            <p id="stage-loading" class="overlay">Loading creature…</p>
+            <p id="webgl-banner" class="overlay error" hidden>
+              3D unavailable in this browser. The catalog and inspector remain usable.
+            </p>
+          </div>
+          <div class="timeline">
+            <button id="play-pause" type="button" class="button">
+              Pause
+            </button>
+            <div class="timeline-track">
+              <input
+                id="timeline"
+                type="range"
+                min="0"
+                max="1000"
+                value="0"
+                step="1"
+                aria-label="Clip timeline"
+              />
+              <div id="event-marks" class="event-marks"></div>
+            </div>
+            <span id="clip-time" class="clip-time" aria-live="off">0.00 s</span>
+          </div>
+          <ul id="clip-list" class="clip-list" aria-label="Clips"></ul>
+        </div>
+        <aside id="inspector" class="inspector" aria-label="Manifest inspector"></aside>
+      </section>
+    </main>
+
+    <div id="toast-region" class="toasts" aria-live="polite"></div>
+    <script type="module" src="./assets/app.js"></script>
+  </body>
+</html>

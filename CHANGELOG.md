@@ -28,6 +28,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   turntable and extreme-bend frames.
 - Starter library: `boss/ash-crowned-tyrant`, `quadruped/ridge-stalker`,
   `quadruped/giraffe`, `quadruped/elephant`, and `swarm/chitter-mite`.
+- `beastforge view`: buildless WebGL library viewer with a searchable,
+  category-filtered gallery of live thumbnails, an orbit stage with manifest
+  clip playback and event marks, and a manifest/clips/events inspector.
+- Loopback-only local server with lazy content-addressed asset generation,
+  cache reuse, stale-recipe `409` detection, and per-creature failure isolation.
+- `beastforge view --export DIR`: deterministic static bundle (viewer,
+  `catalog.json` v1.0, `bundle.json`, and creature packages) plus a GitHub Pages
+  workflow that publishes without committing generated binaries.
+- Vendored three.js 0.187.0 under `viewer/third_party/`; no Node, npm, CDN, or
+  external runtime request.
+- Opt-in Playwright browser smoke check (`-m viewer`,
+  `BEASTFORGE_VIEWER_SMOKE=1`).
 - Layered test suite: unit, contract, integration, determinism, defect corpus,
   golden, and consumer imports.
 

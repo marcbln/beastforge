@@ -1,0 +1,75 @@
+name: Publish library viewer
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "library/**"
+      - "src/beastforge/viewer/**"
+      - "src/beastforge/cli/view.py"
+      - "src/beastforge/config.py"
+      - "src/beastforge/library.py"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/pages.yml"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out beastforge
+        uses: actions/checkout@v4
+        with:
+          path: beastforge
+
+      - name: Check out the sibling texforge checkout
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/texforge
+          path: texforge
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+
+      - name: Sync dependencies
+        working-directory: beastforge
+        run: uv sync --all-groups
+
+      - name: Run the default test suite
+        working-directory: beastforge
+        run: uv run pytest -m "not slow and not viewer"
+
+      - name: Validate the library
+        working-directory: beastforge
+        run: uv run beastforge validate
+
+      - name: Export the static viewer
+        working-directory: beastforge
+        run: uv run beastforge view --export site --force --no-browser
+
+      - name: Upload the Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: beastforge/site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

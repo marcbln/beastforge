@@ -5,9 +5,9 @@ from __future__ import annotations
 import hashlib
 
 import pytest
-from tests.conftest import ROOT
 
 from beastforge.render import render
+from tests.conftest import ROOT
 
 GOLDEN = ROOT / "tests/golden/library.sha256"
 

@@ -45,6 +45,12 @@ uv run beastforge validate
 
 # Compare rendered frames with the approved showroom references
 uv run beastforge showroom
+
+# Browse the library in the browser (assets generated on demand)
+uv run beastforge view
+
+# Build the publishable static bundle
+uv run beastforge view --export site --force --no-browser
 ```
 
 Generated outputs are a pair:
@@ -72,6 +78,7 @@ table.
 ```bash
 uv run pytest                 # unit, contract, integration, defect, consumer tests
 uv run pytest -m slow         # determinism loop and full render comparisons
+uv run pytest -m viewer       # opt-in browser smoke (needs BEASTFORGE_VIEWER_SMOKE=1)
 uv run ruff check src tests
 uv run mypy src
 ```

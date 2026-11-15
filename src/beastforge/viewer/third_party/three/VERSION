@@ -1,0 +1,16 @@
+three.js 0.187.0
+Retrieved 2026-11-15 from https://registry.npmjs.org/three/-/three-0.187.0.tgz
+Files:
+  three.module.js
+  addons/loaders/GLTFLoader.js
+  addons/utils/BufferGeometryUtils.js
+  addons/utils/SkeletonUtils.js
+  addons/controls/OrbitControls.js
+Local change: each addon's single terminating `} from 'three';` import was
+rewritten to `} from '../../three.module.js';` so the modules work under the
+viewer's strict CSP (`script-src 'self'`), which blocks an inline import map.
+No runtime code or version was changed.
+
+Upgrade policy: replace every file above and this VERSION together; re-apply the
+relative-import rewrite, never mix versions between the core module and its
+addons. Run the opt-in browser smoke check and note the version in CHANGELOG.md.

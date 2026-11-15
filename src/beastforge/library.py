@@ -10,6 +10,7 @@ from beastforge.config import Settings, find_library_root
 from beastforge.model.errors import NotFoundError
 from beastforge.model.loader import RecipeParseError, load_yaml_document, parse_recipe
 from beastforge.model.recipe import Meta
+from beastforge.rng import recipe_digest
 
 
 @dataclass
@@ -56,6 +57,18 @@ def project_relative(path: Path, *, cwd: Path | None = None) -> str:
 
 def load_entry(path: Path, *, cwd: Path | None = None) -> LibraryEntry:
     """Load one catalog entry from a recipe file's ``meta`` and ``params``."""
+    entry, _document, _digest = load_entry_with_document(path, cwd=cwd)
+    return entry
+
+
+def load_entry_with_document(
+    path: Path, *, cwd: Path | None = None
+) -> tuple[LibraryEntry, dict[str, object], str]:
+    """Load an entry plus its parsed YAML document and canonical recipe digest.
+
+    The document and digest are deliberately not part of :meth:`LibraryEntry.to_json`,
+    so the published ``library.list`` shape stays unchanged.
+    """
     label = project_relative(path, cwd=cwd)
     document = load_yaml_document(path, recipe_label=label)
     recipe = parse_recipe(document, recipe_label=label)
@@ -77,7 +90,7 @@ def load_entry(path: Path, *, cwd: Path | None = None) -> LibraryEntry:
         }
         for param in recipe.params
     ]
-    return LibraryEntry(
+    entry = LibraryEntry(
         name=meta.name,
         category=meta.category,
         description=meta.description,
@@ -87,6 +100,7 @@ def load_entry(path: Path, *, cwd: Path | None = None) -> LibraryEntry:
         path=label,
         params=params,
     )
+    return entry, document, recipe_digest(document)
 
 
 def scan(settings: Settings, *, cwd: Path | None = None) -> list[LibraryEntry]:

@@ -6,9 +6,9 @@ import json
 
 import jsonschema
 import pytest
-from tests.conftest import ROOT, run_cli
 
 from beastforge.model.manifest import ManifestVersionError, read_manifest_compatible
+from tests.conftest import ROOT, run_cli
 
 
 def _schema(name: str) -> dict:

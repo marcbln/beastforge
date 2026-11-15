@@ -75,6 +75,47 @@ flowchart LR
 | `texture/texforge_adapter.py` | the only texforge-aware module | yes |
 | `library.py`, `config.py` | catalog scanning, name resolution, settings | yes |
 | `cli/` | Typer grammar, streams, exit codes, error rendering | yes |
+| `viewer/catalog.py` | pure library scan -> `catalog.json` v1.0 | no |
+| `viewer/cache.py` | content-addressed `(name, recipeSha256)` cache, serialized generation | yes |
+| `viewer/server.py` | loopback `ThreadingHTTPServer`, routes, CSP, path safety | yes |
+| `viewer/export.py` | pure export plan plus staged static-bundle writer | yes |
+| `viewer/assets.py` | `importlib.resources` locator for packaged frontend | no |
+| `viewer/static/` | buildless ES-module frontend; no Node or bundler | browser |
+
+## Viewer component
+
+The viewer is a read-only consumer of the same packages `render` produces. It
+never re-derives gameplay facts or regenerates geometry; the sidecar manifest
+remains authoritative.
+
+```mermaid
+flowchart LR
+  LIB[(library/*.yaml)] --> CAT[catalog.py]
+  CAT --> CJSON[catalog.json v1.0]
+  CJSON --> BROWSER[buildless frontend]
+  BROWSER -->|GET asset| SRV[server.py]
+  SRV --> CACHE[cache.py]
+  CACHE -->|miss| REN[render.py]
+  REN --> CACHE
+  CACHE -->|creatures/name/sha/*| BROWSER
+  CJSON --> EXP[export.py]
+  REN --> EXP
+  STATIC[static/ + third_party/three] --> EXP
+  EXP --> SITE[(static bundle + bundle.json)]
+```
+
+- **Catalog**: pure projection of every loadable recipe; relative,
+  content-addressed URLs; canonical JSON; warnings for unreadable recipes.
+- **Cache**: hit requires both files and a matching manifest digest; generation
+  is global-serialized and installed with one `os.replace`.
+- **Server**: loopback only, regenerates the catalog per request, rejects
+  traversal, and isolates generation failures to one creature.
+- **Export**: builds in a sibling staging directory and installs only owned
+  paths, so a re-export preserves unrelated files and never commits binaries.
+- **Frontend**: browser-native import map plus relative vendor imports, one
+  shared offscreen renderer for thumbnails, and manifest-driven stage framing.
+  `third_party/three/` is pinned and vendored; there is no npm/build step and no
+  runtime request to an external host.
 
 ## Data flow and determinism
 

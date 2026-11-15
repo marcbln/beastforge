@@ -42,3 +42,6 @@ Desktop.ini
 .tox/
 coverage/
 htmlcov/
+
+# Static viewer export target (CI publishes this; never committed)
+site/

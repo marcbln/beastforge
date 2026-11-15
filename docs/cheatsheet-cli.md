@@ -13,6 +13,8 @@
 | Validate one recipe | `beastforge validate {{name}}` |
 | Compare showroom frames | `beastforge showroom` |
 | Accept new references | `beastforge showroom --accept` |
+| Browse the library | `beastforge view` |
+| Export the static site | `beastforge view --export {{dir}}` |
 | Print version | `beastforge version` |
 
 ## list
@@ -78,6 +80,21 @@
 | Compare one creature | `beastforge showroom {{name}}` |
 | Accept new references explicitly | `beastforge showroom --accept` |
 | Machine-readable report | `beastforge showroom --json` |
+
+## view
+
+> Serve the library locally or write a self-contained static bundle.
+> More information: `beastforge view --help`
+
+| Task | Command |
+|------|---------|
+| Browse the library | `beastforge view` |
+| Serve without opening a browser | `beastforge view --no-browser` |
+| Serve on a fixed port | `beastforge view --port {{port}}` |
+| Use a custom cache | `beastforge view --cache-dir {{dir}}` |
+| Export the static site | `beastforge view --export {{dir}}` |
+| Replace an earlier export | `beastforge view --export {{dir}} --force` |
+| Preview an export | `beastforge view --export {{dir}} --dry-run` |
 
 ## version
 
