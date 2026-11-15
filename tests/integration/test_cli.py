@@ -39,7 +39,11 @@ def test_list_filters(env) -> None:
     assert [entry["name"] for entry in payload["creatures"]] == ["ash-crowned-tyrant"]
     result = run_cli(["list", "--tag", "quadruped", "--json"], env)
     payload = json.loads(result.stdout)
-    assert [entry["name"] for entry in payload["creatures"]] == ["ridge-stalker"]
+    assert [entry["name"] for entry in payload["creatures"]] == [
+        "elephant",
+        "giraffe",
+        "ridge-stalker",
+    ]
 
 
 def test_params_json(env) -> None:

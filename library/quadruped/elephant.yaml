@@ -1,0 +1,308 @@
+meta:
+  name: elephant
+  description: "A massive savanna elephant with a long curling trunk, ivory tusks, and broad ears."
+  category: quadruped
+  tags: [quadruped, elephant, tusks, trunk, savanna, heavy]
+  author: beastforge
+  tested_with: "0.1.0"
+  version: "1.0.0"
+
+params:
+  - {name: body-mass, type: float, default: 1.0, min: 0.6, max: 1.6, unit: ratio,
+     description: "Relative body mass used for bulk tuning."}
+  - {name: seed, type: int, default: 8042, min: 0, max: 1000000,
+     description: "Deterministic noise seed."}
+
+budgets: {vertices: 20000, bones: 64, triangles: 60000, max_clip_ticks: 600}
+
+skeleton:
+  root: root
+  bones:
+    - {name: root, parent: null,
+       rest: {translation: [0, 1.55, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: spine-01, parent: root,
+       rest: {translation: [0, 0.05, 0.4], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: spine-02, parent: spine-01,
+       rest: {translation: [0, 0.05, 0.45], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: spine-03, parent: spine-02,
+       rest: {translation: [0, 0.0, 0.45], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: neck, parent: spine-01,
+       rest: {translation: [0, 0.18, -0.5], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: head, parent: neck,
+       rest: {translation: [0, 0.05, -0.38], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: trunk-01, parent: head,
+       rest: {translation: [0, -0.2, -0.22], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: trunk-02, parent: trunk-01,
+       rest: {translation: [0, -0.28, -0.18], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: trunk-03, parent: trunk-02,
+       rest: {translation: [0, -0.28, -0.15], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: trunk-04, parent: trunk-03,
+       rest: {translation: [0, -0.26, -0.1], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: trunk-tip, parent: trunk-04,
+       rest: {translation: [0, -0.15, -0.05], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: tusk-l-01, parent: head,
+       rest: {translation: [0.16, -0.16, -0.34], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: tusk-l-02, parent: tusk-l-01,
+       rest: {translation: [0.02, -0.1, -0.28], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: tusk-r-01, parent: head,
+       rest: {translation: [-0.16, -0.16, -0.34], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: tusk-r-02, parent: tusk-r-01,
+       rest: {translation: [-0.02, -0.1, -0.28], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: ear-l, parent: head,
+       rest: {translation: [0.36, 0.08, -0.02], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: ear-r, parent: head,
+       rest: {translation: [-0.36, 0.08, -0.02], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: tail-01, parent: spine-03,
+       rest: {translation: [0, -0.05, 0.35], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: tail-02, parent: tail-01,
+       rest: {translation: [0, -0.1, 0.25], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: tail-tuft, parent: tail-02,
+       rest: {translation: [0, -0.1, 0.08], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: shoulder-fl, parent: spine-01,
+       rest: {translation: [0.32, -0.1, -0.12], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: upper-fl, parent: shoulder-fl,
+       rest: {translation: [0, -0.55, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: lower-fl, parent: upper-fl,
+       rest: {translation: [0, -0.5, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: foot-fl, parent: lower-fl,
+       rest: {translation: [0, -0.28, -0.1], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: shoulder-fr, parent: spine-01,
+       rest: {translation: [-0.32, -0.1, -0.12], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: upper-fr, parent: shoulder-fr,
+       rest: {translation: [0, -0.55, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: lower-fr, parent: upper-fr,
+       rest: {translation: [0, -0.5, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: foot-fr, parent: lower-fr,
+       rest: {translation: [0, -0.28, -0.1], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: hip-rl, parent: spine-03,
+       rest: {translation: [0.32, -0.1, 0.0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: upper-rl, parent: hip-rl,
+       rest: {translation: [0, -0.57, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: lower-rl, parent: upper-rl,
+       rest: {translation: [0, -0.52, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: foot-rl, parent: lower-rl,
+       rest: {translation: [0, -0.29, -0.1], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: hip-rr, parent: spine-03,
+       rest: {translation: [-0.32, -0.1, 0.0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: upper-rr, parent: hip-rr,
+       rest: {translation: [0, -0.57, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: lower-rr, parent: upper-rr,
+       rest: {translation: [0, -0.52, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: foot-rr, parent: lower-rr,
+       rest: {translation: [0, -0.29, -0.1], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+  chains:
+    - {name: trunk-chain, bones: [trunk-01, trunk-02, trunk-03, trunk-04, trunk-tip]}
+    - {name: front-left-leg, bones: [upper-fl, lower-fl, foot-fl]}
+    - {name: front-right-leg, bones: [upper-fr, lower-fr, foot-fr]}
+    - {name: rear-left-leg, bones: [upper-rl, lower-rl, foot-rl]}
+    - {name: rear-right-leg, bones: [upper-rr, lower-rr, foot-rr]}
+    - {name: tail, bones: [tail-01, tail-02, tail-tuft]}
+    - {name: head-chain, bones: [neck, head]}
+
+surfaces:
+  - name: body
+    mode: sweep
+    kind: torso-shell
+    bones: [spine-01, spine-02, spine-03]
+    rings: 16
+    segments: 20
+    radius: {start: 0.58, end: 0.44}
+    modifiers:
+      taper: {start: 1.0, end: 0.9}
+      squash: [1.0, 1.0, 1.05]
+      radial_noise: {amplitude: 0.015, frequency: 4.0, seed: 21}
+    material: hide
+  - name: trunk
+    mode: sweep
+    kind: limb-tube
+    bones: [trunk-01, trunk-02, trunk-03, trunk-04, trunk-tip]
+    rings: 20
+    segments: 10
+    radius: {start: 0.15, end: 0.035}
+    modifiers:
+      radial_noise: {amplitude: 0.02, frequency: 9.0, seed: 22}
+    material: hide
+  - name: front-left-leg
+    mode: sweep
+    kind: limb-tube
+    bones: [upper-fl, lower-fl, foot-fl]
+    rings: 12
+    segments: 10
+    radius: {start: 0.22, end: 0.12}
+    material: hide
+  - name: front-right-leg
+    mode: sweep
+    kind: limb-tube
+    bones: [upper-fr, lower-fr, foot-fr]
+    rings: 12
+    segments: 10
+    radius: {start: 0.22, end: 0.12}
+    material: hide
+  - name: rear-left-leg
+    mode: sweep
+    kind: limb-tube
+    bones: [upper-rl, lower-rl, foot-rl]
+    rings: 12
+    segments: 10
+    radius: {start: 0.23, end: 0.12}
+    material: hide
+  - name: rear-right-leg
+    mode: sweep
+    kind: limb-tube
+    bones: [upper-rr, lower-rr, foot-rr]
+    rings: 12
+    segments: 10
+    radius: {start: 0.23, end: 0.12}
+    material: hide
+  - name: tail
+    mode: sweep
+    kind: limb-tube
+    bones: [tail-01, tail-02]
+    rings: 8
+    segments: 6
+    radius: {start: 0.09, end: 0.03}
+    material: hide
+  - name: tusk-left
+    mode: sweep
+    kind: limb-tube
+    bones: [tusk-l-01, tusk-l-02]
+    rings: 8
+    segments: 8
+    radius: {start: 0.07, end: 0.02}
+    material: tusk
+  - name: tusk-right
+    mode: sweep
+    kind: limb-tube
+    bones: [tusk-r-01, tusk-r-02]
+    rings: 8
+    segments: 8
+    radius: {start: 0.07, end: 0.02}
+    material: tusk
+  - name: head
+    mode: sweep
+    kind: rigid-part
+    bones: [head]
+    rigid_bone: head
+    rings: 6
+    segments: 12
+    radius: {start: 0.36, end: 0.36}
+    modifiers:
+      squash: [1.0, 0.95, 1.15]
+    material: hide
+  - name: ear-left
+    mode: sweep
+    kind: rigid-part
+    bones: [ear-l]
+    rigid_bone: ear-l
+    rings: 5
+    segments: 12
+    radius: {start: 0.34, end: 0.34}
+    modifiers:
+      squash: [0.8, 1.1, 0.22]
+    material: hide
+  - name: ear-right
+    mode: sweep
+    kind: rigid-part
+    bones: [ear-r]
+    rigid_bone: ear-r
+    rings: 5
+    segments: 12
+    radius: {start: 0.34, end: 0.34}
+    modifiers:
+      squash: [0.8, 1.1, 0.22]
+    material: hide
+  - name: tail-tuft
+    mode: sweep
+    kind: rigid-part
+    bones: [tail-tuft]
+    rigid_bone: tail-tuft
+    rings: 4
+    segments: 6
+    radius: {start: 0.06, end: 0.06}
+    material: hair
+  - name: nail-front-left
+    mode: sweep
+    kind: rigid-part
+    bones: [foot-fl]
+    rigid_bone: foot-fl
+    rings: 4
+    segments: 8
+    radius: {start: 0.13, end: 0.13}
+    modifiers:
+      squash: [1.0, 0.75, 1.2]
+    material: nail
+  - name: nail-front-right
+    mode: sweep
+    kind: rigid-part
+    bones: [foot-fr]
+    rigid_bone: foot-fr
+    rings: 4
+    segments: 8
+    radius: {start: 0.13, end: 0.13}
+    modifiers:
+      squash: [1.0, 0.75, 1.2]
+    material: nail
+  - name: nail-rear-left
+    mode: sweep
+    kind: rigid-part
+    bones: [foot-rl]
+    rigid_bone: foot-rl
+    rings: 4
+    segments: 8
+    radius: {start: 0.13, end: 0.13}
+    modifiers:
+      squash: [1.0, 0.75, 1.2]
+    material: nail
+  - name: nail-rear-right
+    mode: sweep
+    kind: rigid-part
+    bones: [foot-rr]
+    rigid_bone: foot-rr
+    rings: 4
+    segments: 8
+    radius: {start: 0.13, end: 0.13}
+    modifiers:
+      squash: [1.0, 0.75, 1.2]
+    material: nail
+
+materials:
+  - {name: hide, texture: cracked-earth,
+     params: {cells: 8, seed: 91, crack-color: "#2f2e2b",
+              mud-light: "#6a6862", mud-dark: "#4a4844"}, size: 512x512,
+     metallic: 0.0, roughness: 0.9}
+  - {name: tusk, texture: marble-veined,
+     params: {vein-scale: 3, seed: 15, body-color: "#e6dcc2",
+              vein-color: "#cdbb90"}, size: 256x256,
+     metallic: 0.0, roughness: 0.35}
+  - {name: nail, texture: marble-veined,
+     params: {vein-scale: 6, seed: 52, body-color: "#3a3835",
+              vein-color: "#252422"}, size: 256x256,
+     metallic: 0.0, roughness: 0.55}
+  - {name: hair, texture: hair, params: {strands: 48, seed: 61}, size: 256x256,
+     metallic: 0.0, roughness: 0.9}
+
+clips:
+  - {name: idle, generator: breathe, duration: 2.2, loop: true,
+     params: {amplitude: 0.03, cycles: 1}}
+  - {name: locomotion, generator: gait, duration: 1.6, loop: true,
+     params: {stride: 0.18, duty: 0.65, bob: 0.02,
+              legs: [front-left-leg, front-right-leg, rear-left-leg, rear-right-leg]}}
+  - name: attack
+    generator: telegraph-attack
+    ticks: 70
+    loop: false
+    params: {windup: 0.5, strike: 0.2, recovery: 0.45, reach: 1.2}
+    events:
+      - {name: impact, ticks: 42}
+  - {name: hurt, generator: recoil, duration: 0.6, loop: false,
+     params: {amplitude: 0.14, decay: 7.0}}
+  - {name: death, generator: death-collapse, duration: 1.8, loop: false,
+     params: {collapse: 0.9}}
+
+sockets:
+  - {name: trunk-tip, bone: trunk-tip, offset: [0, -0.05, 0]}
+
+volumes:
+  - {name: body-hull, role: hit, center: [0, 1.62, 0.7], extents: [0.6, 0.55, 1.05]}
+  - {name: head-weak, role: weak-point, center: [0, 1.85, -0.55],
+     extents: [0.3, 0.3, 0.35], bone: head}

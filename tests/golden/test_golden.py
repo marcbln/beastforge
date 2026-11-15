@@ -23,7 +23,13 @@ def _expected() -> dict[str, tuple[str, str]]:
 @pytest.mark.slow
 def test_library_hashes_match_goldens(settings, tmp_path) -> None:
     expected = _expected()
-    assert set(expected) == {"ash-crowned-tyrant", "ridge-stalker", "chitter-mite"}
+    assert set(expected) == {
+        "ash-crowned-tyrant",
+        "ridge-stalker",
+        "chitter-mite",
+        "giraffe",
+        "elephant",
+    }
     for name, (glb_hash, manifest_hash) in expected.items():
         outcome = render(name, settings=settings, out_dir=str(tmp_path / name), force=True)
         assert outcome.glb is not None

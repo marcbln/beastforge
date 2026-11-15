@@ -68,6 +68,38 @@ Recipe: [`library/quadruped/ridge-stalker.yaml`](../library/quadruped/ridge-stal
 |:---:|
 | ![Front view with the test joint bent 90 degrees](../showroom/reference/ridge-stalker/frames/front__extreme-bend.png) |
 
+## elephant
+
+Recipe: [`library/quadruped/elephant.yaml`](../library/quadruped/elephant.yaml)
+
+**Turntable, rest pose**
+
+| Front | Three-quarter | Side | Rear |
+|:---:|:---:|:---:|:---:|
+| ![Front view, rest pose](../showroom/reference/elephant/frames/front__rest.png) | ![Three-quarter view, rest pose](../showroom/reference/elephant/frames/three-quarter__rest.png) | ![Side view, rest pose](../showroom/reference/elephant/frames/side__rest.png) | ![Rear view, rest pose](../showroom/reference/elephant/frames/rear__rest.png) |
+
+**Deformation check**
+
+| Front, extreme bend (90°) |
+|:---:|
+| ![Front view with the test joint bent 90 degrees](../showroom/reference/elephant/frames/front__extreme-bend.png) |
+
+## giraffe
+
+Recipe: [`library/quadruped/giraffe.yaml`](../library/quadruped/giraffe.yaml)
+
+**Turntable, rest pose**
+
+| Front | Three-quarter | Side | Rear |
+|:---:|:---:|:---:|:---:|
+| ![Front view, rest pose](../showroom/reference/giraffe/frames/front__rest.png) | ![Three-quarter view, rest pose](../showroom/reference/giraffe/frames/three-quarter__rest.png) | ![Side view, rest pose](../showroom/reference/giraffe/frames/side__rest.png) | ![Rear view, rest pose](../showroom/reference/giraffe/frames/rear__rest.png) |
+
+**Deformation check**
+
+| Front, extreme bend (90°) |
+|:---:|
+| ![Front view with the test joint bent 90 degrees](../showroom/reference/giraffe/frames/front__extreme-bend.png) |
+
 ## chitter-mite
 
 Recipe: [`library/swarm/chitter-mite.yaml`](../library/swarm/chitter-mite.yaml)

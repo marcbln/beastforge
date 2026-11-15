@@ -24,8 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   atomic staged output.
 - Showroom with a numpy software rasterizer, fixed cameras/lighting, perceptual
   image comparison, structural summaries, and explicit `--accept`.
-- Starter library: `boss/ash-crowned-tyrant`, `quadruped/ridge-stalker`, and
-  `swarm/chitter-mite`.
+- Browsable [showroom gallery](docs/showroom-gallery.md) of the approved
+  turntable and extreme-bend frames.
+- Starter library: `boss/ash-crowned-tyrant`, `quadruped/ridge-stalker`,
+  `quadruped/giraffe`, `quadruped/elephant`, and `swarm/chitter-mite`.
 - Layered test suite: unit, contract, integration, determinism, defect corpus,
   golden, and consumer imports.
 
