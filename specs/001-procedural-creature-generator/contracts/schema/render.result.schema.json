@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://beastforge.dev/schema/render.result.schema.json",
+  "title": "beastforge generation report (render --json)",
+  "description": "Everything needed to verify and reproduce one generation: output paths, content hashes, emitted inventory, effective parameters, and provenance (FR-007, SC-002).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "tool_version", "status", "dry_run", "outputs",
+    "inventory", "effective_params", "provenance", "warnings"
+  ],
+  "properties": {
+    "schema_version": { "const": "1" },
+    "tool_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+][0-9A-Za-z.-]+)?$" },
+    "status": { "const": "ok" },
+    "dry_run": { "type": "boolean" },
+    "outputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["glb", "manifest", "textures"],
+      "properties": {
+        "glb": { "$ref": "#/$defs/file" },
+        "manifest": { "$ref": "#/$defs/file" },
+        "textures": { "type": "array", "items": { "$ref": "#/$defs/texture" } }
+      }
+    },
+    "inventory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["clips", "events", "sockets", "volumes", "phases"],
+      "properties": {
+        "clips": { "type": "array", "items": { "type": "string" } },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["clip", "time", "name"],
+            "properties": {
+              "clip": { "type": "string" },
+              "time": { "type": "number", "minimum": 0 },
+              "name": { "type": "string" }
+            }
+          }
+        },
+        "sockets": { "type": "array", "items": { "type": "string" } },
+        "volumes": { "type": "array", "items": { "type": "string" } },
+        "phases": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "effective_params": {
+      "type": "object",
+      "description": "Declared defaults merged with --set overrides, fully resolved (US1 scenario 4).",
+      "additionalProperties": { "type": ["string", "number", "boolean", "null"] }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["recipe", "recipe_sha256", "tool_version"],
+      "properties": {
+        "recipe": { "type": "string" },
+        "recipe_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "tool_version": { "type": "string" }
+      }
+    },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "timing_ms": {
+      "type": ["number", "null"],
+      "description": "Diagnostic only; never part of byte identity."
+    }
+  },
+  "$defs": {
+    "file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "bytes": { "type": "integer", "minimum": 0 }
+      },
+      "description": "sha256/bytes are absent in --dry-run."
+    },
+    "texture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "sha256", "width", "height"],
+      "properties": {
+        "name": { "type": "string", "description": "Material name whose texture was embedded." },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "recipe": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://beastforge.dev/schema/library.list.schema.json",
+  "title": "beastforge library catalog (list --json)",
+  "description": "Filesystem-scanned catalog view; nothing is generated (FR-001/002, US1 scenario 1).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "tool_version", "status", "creatures"],
+  "properties": {
+    "schema_version": { "const": "1" },
+    "tool_version": { "type": "string" },
+    "status": { "const": "ok" },
+    "creatures": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entry" }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "category", "description", "tags", "params", "tested_with", "version", "path"],
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?$" },
+        "category": { "enum": ["boss", "quadruped", "swarm", "other"] },
+        "description": { "type": "string", "minLength": 1 },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "params": { "type": "array", "items": { "$ref": "#/$defs/param" } },
+        "tested_with": { "type": "string" },
+        "version": { "type": "string" },
+        "path": { "type": "string", "description": "Project-relative recipe path." }
+      }
+    },
+    "param": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type", "default", "description"],
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "enum": ["int", "float", "bool", "enum", "string"] },
+        "default": { "type": ["string", "number", "boolean"] },
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "values": { "type": "array", "items": { "type": ["string", "number", "boolean"] } },
+        "unit": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    }
+  }
+}

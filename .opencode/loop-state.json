@@ -1,0 +1,15 @@
+{
+  "active": true,
+  "iteration": 2,
+  "maxIterations": 1000000000,
+  "prompt": "@specs/001-procedural-creature-generator/plan.md",
+  "sessionID": "ses_e23acbce4ffeKKAPydjnv9uQO2",
+  "startedAt": "2026-11-14T23:10:06.687Z",
+  "objective": "@specs/001-procedural-creature-generator/plan.md",
+  "lastActivity": "2026-11-14T23:55:16.358Z",
+  "lastProgress": "[Verification ❌ FAILED] TODO: 0/0, Sync: clean\nFailures:\nTODO file not found at .opencode/todo.md",
+  "stagnationCount": 0,
+  "lastVerificationSummary": "[Verification ❌ FAILED] TODO: 0/0, Sync: clean\nFailures:\nTODO file not found at .opencode/todo.md",
+  "lastContinuationReason": "verification_failed",
+  "lastContinuationAt": "2026-11-14T23:55:16.358Z"
+}

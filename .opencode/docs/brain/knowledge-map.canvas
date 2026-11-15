@@ -1,0 +1,90 @@
+{
+  "nodes": [
+    {
+      "id": "objective",
+      "type": "text",
+      "text": "Objective\n@specs/001-procedural-creature-generator/plan.md",
+      "x": 0,
+      "y": 0,
+      "width": 360,
+      "height": 180
+    },
+    {
+      "id": "runtime",
+      "type": "text",
+      "text": "Runtime\nIteration 2/1000000000\nProgress [Verification ❌ FAILED] TODO: 0/0, Sync: clean\nFailures:\nTODO file not found at .opencode/todo.md",
+      "x": 420,
+      "y": 0,
+      "width": 360,
+      "height": 180
+    },
+    {
+      "id": "verification",
+      "type": "text",
+      "text": "Verification\n[Verification ❌ FAILED] TODO: 0/0, Sync: clean\nFailures:\nTODO file not found at .opencode/todo.md",
+      "x": 840,
+      "y": 0,
+      "width": 360,
+      "height": 180
+    },
+    {
+      "id": "event-0",
+      "type": "text",
+      "text": "mission_started\nMission loop started",
+      "x": 0,
+      "y": 260,
+      "width": 360,
+      "height": 180
+    },
+    {
+      "id": "event-1",
+      "type": "text",
+      "text": "verification_failed\n[Verification ❌ FAILED] TODO: 0/0, Sync: clean\nFailures:\nTODO file not found at .opencode/todo.md",
+      "x": 420,
+      "y": 260,
+      "width": 360,
+      "height": 180
+    },
+    {
+      "id": "event-2",
+      "type": "text",
+      "text": "continuation_scheduled\n[Verification ❌ FAILED] TODO: 0/0, Sync: clean\nFailures:\nTODO file not found at .opencode/todo.md",
+      "x": 840,
+      "y": 260,
+      "width": 360,
+      "height": 180
+    }
+  ],
+  "edges": [
+    {
+      "id": "objective-runtime",
+      "fromNode": "objective",
+      "toNode": "runtime",
+      "label": "drives"
+    },
+    {
+      "id": "runtime-verification",
+      "fromNode": "runtime",
+      "toNode": "verification",
+      "label": "checks"
+    },
+    {
+      "id": "verification-event-0",
+      "fromNode": "verification",
+      "toNode": "event-0",
+      "label": "evidence"
+    },
+    {
+      "id": "verification-event-1",
+      "fromNode": "verification",
+      "toNode": "event-1",
+      "label": "evidence"
+    },
+    {
+      "id": "verification-event-2",
+      "fromNode": "verification",
+      "toNode": "event-2",
+      "label": "evidence"
+    }
+  ]
+}

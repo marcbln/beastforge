@@ -35,4 +35,6 @@ spec. Link related ADRs and backlog notes instead of copying them.
 
 ## Index
 
-_No specifications recorded yet._
+| Spec | Title | Status |
+|------|-------|--------|
+| [001](001-procedural-creature-generator/spec.md) | Procedural 3D Creature Generator | Implemented |

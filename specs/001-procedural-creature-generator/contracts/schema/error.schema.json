@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://beastforge.dev/schema/error.schema.json",
+  "title": "beastforge CLI error (any non-zero exit under --json)",
+  "description": "Exactly one error object on stdout for a failing command. Names the offending value and the next corrective step; no stack trace unless --debug/--trace (FR-011, cli:errors).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "tool_version", "status", "error"],
+  "properties": {
+    "schema_version": { "const": "1" },
+    "tool_version": { "type": "string" },
+    "status": { "const": "error" },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "location", "expected", "actual", "remedy"],
+      "properties": {
+        "code": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "message": { "type": "string", "minLength": 1 },
+        "location": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path"],
+          "properties": {
+            "recipe": { "type": "string" },
+            "path": { "type": "string" }
+          }
+        },
+        "expected": {},
+        "actual": {},
+        "remedy": { "type": "string", "minLength": 1 },
+        "suggestion": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,171 @@
+meta:
+  name: chitter-mite
+  description: "A palm-sized hovering swarm unit with six scuttling legs and steel mandibles."
+  category: swarm
+  tags: [swarm, mite, hover, chitin]
+  author: beastforge
+  tested_with: "0.1.0"
+  version: "1.0.0"
+
+params:
+  - {name: hover-height, type: float, default: 0.4, min: 0.15, max: 1.2, unit: m,
+     description: "Resting hover height above the ground."}
+  - {name: seed, type: int, default: 4242, min: 0, max: 1000000,
+     description: "Deterministic noise seed."}
+
+budgets: {vertices: 20000, bones: 64, triangles: 60000, max_clip_ticks: 600}
+
+skeleton:
+  root: root
+  bones:
+    - {name: root, parent: null,
+       rest: {translation: [0, 0.4, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: body, parent: root,
+       rest: {translation: [0, 0, 0.05], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: head, parent: body,
+       rest: {translation: [0, 0.04, -0.22], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: mandible-l, parent: head,
+       rest: {translation: [0.05, -0.03, -0.12], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: mandible-r, parent: head,
+       rest: {translation: [-0.05, -0.03, -0.12], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: leg-l1, parent: body,
+       rest: {translation: [0.14, -0.05, -0.08], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: leg-l1-tip, parent: leg-l1,
+       rest: {translation: [0.12, -0.12, 0.04], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: leg-l2, parent: body,
+       rest: {translation: [0.16, -0.05, 0.04], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: leg-l2-tip, parent: leg-l2,
+       rest: {translation: [0.12, -0.12, 0.04], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: leg-l3, parent: body,
+       rest: {translation: [0.14, -0.05, 0.14], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: leg-l3-tip, parent: leg-l3,
+       rest: {translation: [0.12, -0.12, 0.04], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: leg-r1, parent: body,
+       rest: {translation: [-0.14, -0.05, -0.08], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: leg-r1-tip, parent: leg-r1,
+       rest: {translation: [-0.12, -0.12, 0.04], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: leg-r2, parent: body,
+       rest: {translation: [-0.16, -0.05, 0.04], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: leg-r2-tip, parent: leg-r2,
+       rest: {translation: [-0.12, -0.12, 0.04], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: leg-r3, parent: body,
+       rest: {translation: [-0.14, -0.05, 0.14], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: leg-r3-tip, parent: leg-r3,
+       rest: {translation: [-0.12, -0.12, 0.04], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+  chains:
+    - {name: left-leg-1, bones: [leg-l1, leg-l1-tip]}
+    - {name: left-leg-2, bones: [leg-l2, leg-l2-tip]}
+    - {name: left-leg-3, bones: [leg-l3, leg-l3-tip]}
+    - {name: right-leg-1, bones: [leg-r1, leg-r1-tip]}
+    - {name: right-leg-2, bones: [leg-r2, leg-r2-tip]}
+    - {name: right-leg-3, bones: [leg-r3, leg-r3-tip]}
+
+surfaces:
+  - name: body-shell
+    mode: sweep
+    kind: torso-shell
+    bones: [body, head]
+    rings: 8
+    segments: 14
+    radius: {start: 0.18, end: 0.11}
+    modifiers:
+      squash: [1.0, 0.8, 1.2]
+      radial_noise: {amplitude: 0.03, frequency: 5.0, seed: 9}
+    material: hide
+  - name: left-leg-1
+    mode: sweep
+    kind: limb-tube
+    bones: [leg-l1, leg-l1-tip]
+    rings: 6
+    segments: 6
+    radius: {start: 0.035, end: 0.018}
+    material: chitin
+  - name: left-leg-2
+    mode: sweep
+    kind: limb-tube
+    bones: [leg-l2, leg-l2-tip]
+    rings: 6
+    segments: 6
+    radius: {start: 0.035, end: 0.018}
+    material: chitin
+  - name: left-leg-3
+    mode: sweep
+    kind: limb-tube
+    bones: [leg-l3, leg-l3-tip]
+    rings: 6
+    segments: 6
+    radius: {start: 0.035, end: 0.018}
+    material: chitin
+  - name: right-leg-1
+    mode: sweep
+    kind: limb-tube
+    bones: [leg-r1, leg-r1-tip]
+    rings: 6
+    segments: 6
+    radius: {start: 0.035, end: 0.018}
+    material: chitin
+  - name: right-leg-2
+    mode: sweep
+    kind: limb-tube
+    bones: [leg-r2, leg-r2-tip]
+    rings: 6
+    segments: 6
+    radius: {start: 0.035, end: 0.018}
+    material: chitin
+  - name: right-leg-3
+    mode: sweep
+    kind: limb-tube
+    bones: [leg-r3, leg-r3-tip]
+    rings: 6
+    segments: 6
+    radius: {start: 0.035, end: 0.018}
+    material: chitin
+  - name: mandible-left
+    mode: sweep
+    kind: rigid-part
+    bones: [mandible-l]
+    rigid_bone: mandible-l
+    rings: 4
+    segments: 5
+    radius: {start: 0.03, end: 0.03}
+    material: chitin
+  - name: mandible-right
+    mode: sweep
+    kind: rigid-part
+    bones: [mandible-r]
+    rigid_bone: mandible-r
+    rings: 4
+    segments: 5
+    radius: {start: 0.03, end: 0.03}
+    material: chitin
+
+materials:
+  - {name: hide, texture: granite, params: {scale: 12, seed: 21}, size: 256x256,
+     metallic: 0.0, roughness: 0.8}
+  - {name: chitin, texture: brushed-steel, params: {grain: 20, seed: 5}, size: 256x256,
+     metallic: 0.5, roughness: 0.3}
+
+clips:
+  - {name: idle, generator: breathe, duration: 1.5, loop: true,
+     params: {amplitude: 0.05, cycles: 1}}
+  - {name: locomotion, generator: hover-bob, duration: 1.0, loop: true,
+     params: {amplitude: 0.06, cycles: 1}}
+  - name: attack
+    generator: telegraph-attack
+    ticks: 30
+    loop: false
+    params: {windup: 0.2, strike: 0.1, recovery: 0.2, reach: 0.4}
+    events:
+      - {name: impact, ticks: 20}
+  - {name: hurt, generator: recoil, duration: 0.4, loop: false,
+     params: {amplitude: 0.12, decay: 10.0}}
+  - {name: death, generator: death-collapse, duration: 1.0, loop: false,
+     params: {collapse: 0.8}}
+
+sockets:
+  - {name: eye, bone: head, offset: [0, 0.02, -0.12]}
+
+volumes:
+  - {name: body-hull, role: hit, center: [0, 0.4, 0], extents: [0.2, 0.16, 0.22]}
+  - {name: mandible-weak, role: weak-point, center: [0, 0.36, -0.28],
+     extents: [0.1, 0.08, 0.1], bone: head}

@@ -1,0 +1,202 @@
+meta:
+  name: ash-crowned-tyrant
+  description: "A towering ash-crowned boss with a chitin skull, heavy arms, and a whipping tail."
+  category: boss
+  tags: [boss, tyrant, ash, chitin]
+  author: beastforge
+  tested_with: "0.1.0"
+  version: "1.0.0"
+
+params:
+  - {name: body-scale, type: float, default: 1.0, min: 0.6, max: 1.6, unit: ratio,
+     description: "Uniform body scale."}
+  - {name: seed, type: int, default: 1917, min: 0, max: 1000000,
+     description: "Deterministic noise seed."}
+
+budgets: {vertices: 20000, bones: 64, triangles: 60000, max_clip_ticks: 600}
+
+skeleton:
+  root: root
+  bones:
+    - {name: root, parent: null,
+       rest: {translation: [0, 1.6, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: spine-01, parent: root,
+       rest: {translation: [0, 0, 0.3], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: spine-02, parent: spine-01,
+       rest: {translation: [0, 0.05, 0.35], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: spine-03, parent: spine-02,
+       rest: {translation: [0, 0.05, 0.35], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: neck, parent: spine-03,
+       rest: {translation: [0, 0.2, -0.3], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: head, parent: neck,
+       rest: {translation: [0, 0.15, -0.35], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: jaw, parent: head,
+       rest: {translation: [0, -0.1, -0.25], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: crown, parent: head,
+       rest: {translation: [0, 0.22, 0.05], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: shoulder-l, parent: spine-02,
+       rest: {translation: [0.45, 0.05, -0.1], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: upper-arm-l, parent: shoulder-l,
+       rest: {translation: [0, -0.38, 0.08], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: lower-arm-l, parent: upper-arm-l,
+       rest: {translation: [0, -0.38, 0.04], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: hand-l, parent: lower-arm-l,
+       rest: {translation: [0, -0.32, 0.04], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: shoulder-r, parent: spine-02,
+       rest: {translation: [-0.45, 0.05, -0.1], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: upper-arm-r, parent: shoulder-r,
+       rest: {translation: [0, -0.38, 0.08], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: lower-arm-r, parent: upper-arm-r,
+       rest: {translation: [0, -0.38, 0.04], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: hand-r, parent: lower-arm-r,
+       rest: {translation: [0, -0.32, 0.04], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: hip-l, parent: root,
+       rest: {translation: [0.25, -0.1, 0.05], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: thigh-l, parent: hip-l,
+       rest: {translation: [0, -0.42, 0.05], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: shin-l, parent: thigh-l,
+       rest: {translation: [0, -0.42, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: foot-l, parent: shin-l,
+       rest: {translation: [0, -0.28, -0.12], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: hip-r, parent: root,
+       rest: {translation: [-0.25, -0.1, 0.05], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: thigh-r, parent: hip-r,
+       rest: {translation: [0, -0.42, 0.05], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: shin-r, parent: thigh-r,
+       rest: {translation: [0, -0.42, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: foot-r, parent: shin-r,
+       rest: {translation: [0, -0.28, -0.12], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: tail-01, parent: spine-03,
+       rest: {translation: [0, -0.05, 0.3], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: tail-02, parent: tail-01,
+       rest: {translation: [0, 0.02, 0.35], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: tail-03, parent: tail-02,
+       rest: {translation: [0, 0.03, 0.35], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: tail-04, parent: tail-03,
+       rest: {translation: [0, 0.02, 0.3], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+  chains:
+    - {name: left-arm, bones: [upper-arm-l, lower-arm-l, hand-l]}
+    - {name: right-arm, bones: [upper-arm-r, lower-arm-r, hand-r]}
+    - {name: left-leg, bones: [thigh-l, shin-l, foot-l]}
+    - {name: right-leg, bones: [thigh-r, shin-r, foot-r]}
+    - {name: tail, bones: [tail-01, tail-02, tail-03, tail-04]}
+    - {name: head-chain, bones: [neck, head]}
+
+surfaces:
+  - name: torso
+    mode: sweep
+    kind: torso-shell
+    bones: [spine-01, spine-02, spine-03, neck]
+    rings: 14
+    segments: 18
+    radius: {start: 0.55, end: 0.34}
+    blend: 0.25
+    modifiers:
+      taper: {start: 1.0, end: 0.85}
+      radial_noise: {amplitude: 0.02, frequency: 3.0, seed: 5}
+      squash: [1.0, 1.15, 1.0]
+    material: hide
+  - name: left-arm
+    mode: sweep
+    kind: limb-tube
+    bones: [upper-arm-l, lower-arm-l, hand-l]
+    rings: 12
+    segments: 10
+    radius: {start: 0.18, end: 0.06}
+    material: hide
+  - name: right-arm
+    mode: sweep
+    kind: limb-tube
+    bones: [upper-arm-r, lower-arm-r, hand-r]
+    rings: 12
+    segments: 10
+    radius: {start: 0.18, end: 0.06}
+    material: hide
+  - name: left-leg
+    mode: sweep
+    kind: limb-tube
+    bones: [thigh-l, shin-l, foot-l]
+    rings: 12
+    segments: 10
+    radius: {start: 0.22, end: 0.09}
+    material: hide
+  - name: right-leg
+    mode: sweep
+    kind: limb-tube
+    bones: [thigh-r, shin-r, foot-r]
+    rings: 12
+    segments: 10
+    radius: {start: 0.22, end: 0.09}
+    material: hide
+  - name: tail
+    mode: sweep
+    kind: limb-tube
+    bones: [tail-01, tail-02, tail-03, tail-04]
+    rings: 14
+    segments: 8
+    radius: {start: 0.16, end: 0.03}
+    material: hide
+  - name: skull
+    mode: sweep
+    kind: rigid-part
+    bones: [head]
+    rigid_bone: head
+    rings: 4
+    segments: 8
+    radius: {start: 0.3, end: 0.3}
+    material: chitin
+  - name: crown-plate
+    mode: sweep
+    kind: rigid-part
+    bones: [crown]
+    rigid_bone: crown
+    rings: 4
+    segments: 6
+    radius: {start: 0.16, end: 0.16}
+    material: chitin
+  - name: jaw-plate
+    mode: sweep
+    kind: rigid-part
+    bones: [jaw]
+    rigid_bone: jaw
+    rings: 4
+    segments: 6
+    radius: {start: 0.11, end: 0.11}
+    material: chitin
+
+materials:
+  - {name: hide, texture: granite, params: {scale: 8, seed: 12}, size: 256x256,
+     metallic: 0.0, roughness: 0.9}
+  - {name: chitin, texture: brushed-steel, params: {grain: 14, seed: 3}, size: 256x256,
+     metallic: 0.4, roughness: 0.35}
+
+clips:
+  - {name: idle, generator: breathe, duration: 2.0, loop: true,
+     params: {amplitude: 0.04, cycles: 1}}
+  - {name: locomotion, generator: gait, duration: 1.2, loop: true,
+     params: {stride: 0.28, duty: 0.6, bob: 0.02,
+              legs: [left-leg, right-leg]}}
+  - name: attack
+    generator: telegraph-attack
+    ticks: 60
+    loop: false
+    params: {windup: 0.4, strike: 0.15, recovery: 0.35, reach: 1.4}
+    events:
+      - {name: impact, ticks: 36}
+  - {name: hurt, generator: recoil, duration: 0.5, loop: false,
+     params: {amplitude: 0.2, decay: 8.0}}
+  - {name: death, generator: death-collapse, duration: 1.5, loop: false,
+     params: {collapse: 0.9}}
+
+sockets:
+  - {name: maw, bone: head, offset: [0, -0.08, -0.35]}
+  - {name: core, bone: spine-02, offset: [0, 0.1, -0.2]}
+
+volumes:
+  - {name: body-hull, role: hit, center: [0, 1.55, 0.25], extents: [0.55, 0.65, 0.65]}
+  - {name: skull-weak, role: weak-point, center: [0, 1.95, -0.55],
+     extents: [0.24, 0.24, 0.3], bone: head}
+
+phases:
+  - {name: enraged, threshold: 0.66}
+  - {name: desperate, threshold: 0.33}

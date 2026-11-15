@@ -1,0 +1,178 @@
+meta:
+  name: ridge-stalker
+  description: "A low, ridge-backed quadruped predator with a chitin skull plate."
+  category: quadruped
+  tags: [quadruped, predator, ridge]
+  author: beastforge
+  tested_with: "0.1.0"
+  version: "1.0.0"
+
+params:
+  - {name: body-length, type: float, default: 2.4, min: 1.2, max: 4.0, unit: m,
+     description: "Tip-to-tail body length."}
+  - {name: seed, type: int, default: 1717, min: 0, max: 1000000,
+     description: "Deterministic noise seed."}
+
+budgets: {vertices: 20000, bones: 64, triangles: 60000, max_clip_ticks: 600}
+
+skeleton:
+  root: root
+  bones:
+    - {name: root, parent: null,
+       rest: {translation: [0, 0.9, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: spine-01, parent: root,
+       rest: {translation: [0, 0, 0.35], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: spine-02, parent: spine-01,
+       rest: {translation: [0, 0.05, 0.35], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: spine-03, parent: spine-02,
+       rest: {translation: [0, 0.05, 0.35], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: neck, parent: spine-01,
+       rest: {translation: [0, 0.15, -0.3], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: head, parent: neck,
+       rest: {translation: [0, 0.1, -0.35], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: tail-01, parent: spine-03,
+       rest: {translation: [0, -0.05, 0.3], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: tail-02, parent: tail-01,
+       rest: {translation: [0, 0, 0.35], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: shoulder-fl, parent: spine-01,
+       rest: {translation: [0.22, -0.05, -0.15], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: upper-fl, parent: shoulder-fl,
+       rest: {translation: [0, -0.35, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: lower-fl, parent: upper-fl,
+       rest: {translation: [0, -0.35, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: foot-fl, parent: lower-fl,
+       rest: {translation: [0, -0.28, -0.08], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: shoulder-fr, parent: spine-01,
+       rest: {translation: [-0.22, -0.05, -0.15], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: upper-fr, parent: shoulder-fr,
+       rest: {translation: [0, -0.35, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: lower-fr, parent: upper-fr,
+       rest: {translation: [0, -0.35, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: foot-fr, parent: lower-fr,
+       rest: {translation: [0, -0.28, -0.08], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: hip-rl, parent: spine-03,
+       rest: {translation: [0.22, -0.05, 0.1], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: upper-rl, parent: hip-rl,
+       rest: {translation: [0, -0.35, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: lower-rl, parent: upper-rl,
+       rest: {translation: [0, -0.35, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: foot-rl, parent: lower-rl,
+       rest: {translation: [0, -0.28, -0.08], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: hip-rr, parent: spine-03,
+       rest: {translation: [-0.22, -0.05, 0.1], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: upper-rr, parent: hip-rr,
+       rest: {translation: [0, -0.35, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: lower-rr, parent: upper-rr,
+       rest: {translation: [0, -0.35, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: foot-rr, parent: lower-rr,
+       rest: {translation: [0, -0.28, -0.08], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+  chains:
+    - {name: front-left-leg, bones: [upper-fl, lower-fl, foot-fl]}
+    - {name: front-right-leg, bones: [upper-fr, lower-fr, foot-fr]}
+    - {name: rear-left-leg, bones: [upper-rl, lower-rl, foot-rl]}
+    - {name: rear-right-leg, bones: [upper-rr, lower-rr, foot-rr]}
+    - {name: tail, bones: [tail-01, tail-02]}
+    - {name: head-chain, bones: [neck, head]}
+
+surfaces:
+  - name: body
+    mode: sweep
+    kind: torso-shell
+    bones: [spine-01, spine-02, spine-03]
+    rings: 12
+    segments: 16
+    radius: {start: 0.38, end: 0.28}
+    modifiers:
+      taper: {start: 1.0, end: 0.85}
+      squash: [1.0, 0.9, 1.0]
+      radial_noise: {amplitude: 0.02, frequency: 4.0, seed: 7}
+    material: hide
+  - name: front-left-leg
+    mode: sweep
+    kind: limb-tube
+    bones: [upper-fl, lower-fl, foot-fl]
+    rings: 10
+    segments: 8
+    radius: {start: 0.12, end: 0.05}
+    material: hide
+  - name: front-right-leg
+    mode: sweep
+    kind: limb-tube
+    bones: [upper-fr, lower-fr, foot-fr]
+    rings: 10
+    segments: 8
+    radius: {start: 0.12, end: 0.05}
+    material: hide
+  - name: rear-left-leg
+    mode: sweep
+    kind: limb-tube
+    bones: [upper-rl, lower-rl, foot-rl]
+    rings: 10
+    segments: 8
+    radius: {start: 0.13, end: 0.05}
+    material: hide
+  - name: rear-right-leg
+    mode: sweep
+    kind: limb-tube
+    bones: [upper-rr, lower-rr, foot-rr]
+    rings: 10
+    segments: 8
+    radius: {start: 0.13, end: 0.05}
+    material: hide
+  - name: tail
+    mode: sweep
+    kind: limb-tube
+    bones: [tail-01, tail-02]
+    rings: 9
+    segments: 8
+    radius: {start: 0.11, end: 0.03}
+    material: hide
+  - name: neck
+    mode: sweep
+    kind: limb-tube
+    bones: [neck, head]
+    rings: 8
+    segments: 8
+    radius: {start: 0.16, end: 0.12}
+    material: hide
+  - name: skull-plate
+    mode: sweep
+    kind: rigid-part
+    bones: [head]
+    rigid_bone: head
+    rings: 4
+    segments: 6
+    radius: {start: 0.16, end: 0.16}
+    material: chitin
+
+materials:
+  - {name: hide, texture: granite, params: {scale: 9, seed: 12}, size: 256x256,
+     metallic: 0.0, roughness: 0.85}
+  - {name: chitin, texture: brushed-steel, params: {seed: 3}, size: 256x256,
+     metallic: 0.3, roughness: 0.4}
+
+clips:
+  - {name: idle, generator: breathe, duration: 2.0, loop: true,
+     params: {amplitude: 0.04, cycles: 1}}
+  - {name: locomotion, generator: gait, duration: 1.0, loop: true,
+     params: {stride: 0.35, duty: 0.6, bob: 0.02,
+              legs: [front-left-leg, front-right-leg, rear-left-leg, rear-right-leg]}}
+  - name: attack
+    generator: telegraph-attack
+    ticks: 50
+    loop: false
+    params: {windup: 0.35, strike: 0.15, recovery: 0.3, reach: 1.2}
+    events:
+      - {name: impact, ticks: 38}
+  - {name: hurt, generator: recoil, duration: 0.5, loop: false,
+     params: {amplitude: 0.18, decay: 8.0}}
+  - {name: death, generator: death-collapse, duration: 1.5, loop: false,
+     params: {collapse: 0.9}}
+
+sockets:
+  - {name: maw, bone: head, offset: [0, -0.05, -0.4]}
+
+volumes:
+  - {name: body-hull, role: hit, center: [0, 0.9, 0.2], extents: [0.45, 0.4, 0.9]}
+  - {name: skull-weak, role: weak-point, center: [0, 1.1, -0.45],
+     extents: [0.18, 0.18, 0.22], bone: head}

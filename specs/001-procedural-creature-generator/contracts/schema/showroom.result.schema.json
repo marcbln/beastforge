@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://beastforge.dev/schema/showroom.result.schema.json",
+  "title": "beastforge showroom result (showroom --json)",
+  "description": "Turntable and extreme-pose frames compared against approved references under fixed cameras/lighting with a documented perceptual tolerance, plus a pixel-independent structural summary (FR-039/040/041, SC-008).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "tool_version", "status", "mode", "tolerance", "creatures"],
+  "properties": {
+    "schema_version": { "const": "1" },
+    "tool_version": { "type": "string" },
+    "status": { "enum": ["ok", "failed"] },
+    "mode": { "enum": ["compare", "accept"] },
+    "tolerance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["per_pixel_threshold", "changed_pixel_ratio"],
+      "properties": {
+        "per_pixel_threshold": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Max allowed per-channel absolute delta (default 8)."
+        },
+        "changed_pixel_ratio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Max allowed fraction of differing opaque pixels (default 0.001)."
+        }
+      }
+    },
+    "creatures": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/creatureResult" }
+    }
+  },
+  "$defs": {
+    "vec3": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "frame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["view", "pose", "path", "sha256"],
+      "properties": {
+        "view": { "enum": ["front", "three-quarter", "side", "rear"] },
+        "pose": { "enum": ["rest", "extreme-bend"] },
+        "path": { "type": "string" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "structural": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["joints", "clips", "events", "skin", "bounds", "counts"],
+      "properties": {
+        "joints": { "type": "object", "additionalProperties": false, "required": ["count", "names"], "properties": { "count": { "type": "integer", "minimum": 1 }, "names": { "type": "array", "items": { "type": "string" } } } },
+        "clips": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["name", "duration", "loop", "generator"], "properties": { "name": { "type": "string" }, "duration": { "type": "number" }, "loop": { "type": "boolean" }, "generator": { "type": "string" } } } },
+        "events": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["clip", "name", "time"], "properties": { "clip": { "type": "string" }, "name": { "type": "string" }, "time": { "type": "number" } } } },
+        "skin": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["influences_one", "influences_two", "min_weight_sum", "max_weight_sum"],
+          "properties": {
+            "influences_one": { "type": "integer", "minimum": 0 },
+            "influences_two": { "type": "integer", "minimum": 0 },
+            "min_weight_sum": { "type": "number" },
+            "max_weight_sum": { "type": "number" }
+          }
+        },
+        "bounds": { "type": "object", "additionalProperties": false, "required": ["min", "max"], "properties": { "min": { "$ref": "#/$defs/vec3" }, "max": { "$ref": "#/$defs/vec3" } } },
+        "counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["vertices", "triangles", "surfaces"],
+          "properties": {
+            "vertices": { "type": "integer", "minimum": 0 },
+            "triangles": { "type": "integer", "minimum": 0 },
+            "surfaces": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "differing_frames"],
+      "properties": {
+        "status": { "enum": ["pass", "fail", "no-baseline"] },
+        "differing_frames": { "type": "array", "items": { "type": "string" } },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["max_pixel_delta", "changed_pixel_ratio"],
+          "properties": {
+            "max_pixel_delta": { "type": "integer", "minimum": 0, "maximum": 255 },
+            "changed_pixel_ratio": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        }
+      }
+    },
+    "creatureResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "frames", "structural", "comparison"],
+      "properties": {
+        "name": { "type": "string" },
+        "frames": { "type": "array", "items": { "$ref": "#/$defs/frame" } },
+        "structural": { "$ref": "#/$defs/structural" },
+        "comparison": { "$ref": "#/$defs/comparison" }
+      }
+    }
+  }
+}
