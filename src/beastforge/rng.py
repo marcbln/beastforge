@@ -21,6 +21,22 @@ def recipe_digest(document: Mapping[str, Any]) -> str:
     ).hexdigest()
 
 
+def build_digest(
+    document: Mapping[str, Any], preset_documents: list[dict[str, Any]] | None = None
+) -> str:
+    """Canonical build digest, including pinned preset content when present.
+
+    A recipe without presets keeps the historical recipe-only digest, so existing
+    goldens and cache keys are unaffected by the preset subsystem.
+    """
+    if not preset_documents:
+        return recipe_digest(document)
+    payload = {"recipe": document, "presets": list(preset_documents)}
+    return hashlib.sha256(
+        canonical_json(payload, trailing_newline=False).encode("utf-8")
+    ).hexdigest()
+
+
 def run_seed(recipe_sha256: str, resolved_params: Mapping[str, Any]) -> str:
     """Derive the run seed from the recipe hash and the fully resolved params."""
     payload = (

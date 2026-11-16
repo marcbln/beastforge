@@ -7,6 +7,7 @@
 | List creatures | `beastforge list` |
 | List as JSON | `beastforge list --json` |
 | Inspect parameters | `beastforge params {{name}}` |
+| List part presets | `beastforge parts` |
 | Generate a package | `beastforge render {{name}}` |
 | Generate with an override | `beastforge render {{name}} --set {{key}}={{value}}` |
 | Validate everything | `beastforge validate` |
@@ -41,6 +42,20 @@
 | Show parameters | `beastforge params {{name}}` |
 | Machine-readable knobs | `beastforge params {{name}} --json` |
 | Inspect an explicit file | `beastforge params {{path}}` |
+
+## parts
+
+> List immutable part presets and their declared parameters, controls, and
+> automatic behaviours. Read-only; never generates geometry.
+> More information: `beastforge parts --help`
+
+| Task | Command |
+|------|---------|
+| List every preset version | `beastforge parts` |
+| Machine-readable list | `beastforge parts --json` |
+| List one preset's versions | `beastforge parts {{name}}` |
+| Pin one exact version | `beastforge parts {{name}} --version {{version}}` |
+| Filter by family | `beastforge parts --family {{organic\|mechanical\|vehicle}}` |
 
 ## render
 

@@ -24,6 +24,8 @@ from beastforge.model.manifest import (
     ShowroomReport,
     ShowroomTolerance,
 )
+from beastforge.parts.registry import PresetRegistry
+from beastforge.parts.resolve import resolve_parts
 from beastforge.pipeline import prepare
 from beastforge.showroom.compare import (
     DEFAULT_CHANGED_PIXEL_RATIO,
@@ -74,22 +76,31 @@ def _render_creature(
     path = resolve_recipe_path(source, settings, cwd=cwd)
     label = project_relative(path, cwd=cwd)
     recipe, document = load_recipe(path, recipe_label=label)
+    registry = PresetRegistry.from_library_root(
+        find_library_root(settings, cwd=cwd), cwd=cwd
+    )
+    resolution = resolve_parts(recipe, registry, recipe_label=label)
     built = prepare(
         recipe,
         document=document,
         recipe_path=label,
         overrides={},
         tool_version=__version__,
+        resolved_parts=resolution.parts,
     )
-    findings = run_gate(
-        built.recipe,
-        recipe_label=label,
-        file_stem=path.stem,
-        document=document,
-        settings=settings,
-        skeleton=built.skeleton,
-        mesh=built.mesh,
-        texforge_root=texforge_root,
+    findings = list(resolution.findings)
+    findings.extend(
+        run_gate(
+            built.recipe,
+            recipe_label=label,
+            file_stem=path.stem,
+            document=document,
+            settings=settings,
+            skeleton=built.skeleton,
+            mesh=built.mesh,
+            texforge_root=texforge_root,
+            resolved_parts=resolution.parts,
+        )
     )
     errors = error_findings(findings)
     if errors:

@@ -20,6 +20,7 @@ from PIL import Image
 from beastforge.export.gltf import TextureImage
 from beastforge.model.errors import BeastforgeError, NotFoundError
 from beastforge.model.findings import ValidationFinding
+from beastforge.model.parts import ResolvedPart
 from beastforge.model.recipe import Material, Recipe
 
 SIZE_RE = re.compile(r"^[1-9][0-9]*x[1-9][0-9]*$")
@@ -300,11 +301,16 @@ def check_materials(
     library: TexforgeLibrary,
     *,
     recipe_label: str,
+    parts: list[ResolvedPart] | None = None,
 ) -> list[ValidationFinding]:
     """Check every material and flag ones no surface references."""
     findings: list[ValidationFinding] = []
     seen: set[str] = set()
     referenced = {surface.material for surface in recipe.surfaces if surface.material is not None}
+    for part in parts or []:
+        surface_material = part.surface.material
+        if surface_material is not None:
+            referenced.add(surface_material)
     for material in recipe.materials:
         if material.name in seen:
             findings.append(

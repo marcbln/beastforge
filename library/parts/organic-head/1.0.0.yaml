@@ -1,0 +1,23 @@
+name: organic-head
+family: organic
+version: "1.0.0"
+description: "Closed organic head with a jaw control."
+surface:
+  mode: sweep
+  kind: swept-solid
+  bones: ["@skull", "@jaw"]
+  rings: 8
+  segments: 10
+  radius: {start: 0.18, end: 0.12}
+  blend: 0.2
+  material: hide
+params:
+  - {name: radius-start, type: float, min: 0.03, max: 0.6, unit: m,
+     description: "Radius at the skull."}
+  - {name: radius-end, type: float, min: 0.02, max: 0.6, unit: m,
+     description: "Radius at the jaw."}
+  - {name: rings, type: int, min: 4, max: 24, unit: count,
+     description: "Rings along the head."}
+controls:
+  - {name: jaw, joint: "@jaw", axis: [1, 0, 0], mode: rotation,
+     range: {min: -20, max: 15}, default: 0, units: deg}

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from beastforge.anim.bake import BakedClip, resolve_duration
+from beastforge.anim.bake import BakedClip
 from beastforge.export.gltf import TextureImage
 from beastforge.geometry.mesh import Mesh
 from beastforge.model.findings import CORE_CLIPS
@@ -13,10 +13,13 @@ from beastforge.model.manifest import (
     Manifest,
     ManifestBudgets,
     ManifestClip,
+    ManifestControl,
+    ManifestControlRange,
     ManifestCreature,
     ManifestEvent,
     ManifestJoint,
     ManifestMaterial,
+    ManifestPart,
     ManifestPhase,
     ManifestProvenance,
     ManifestSkeleton,
@@ -25,6 +28,7 @@ from beastforge.model.manifest import (
     ManifestVolume,
     Playback,
 )
+from beastforge.model.parts import ResolvedPart
 from beastforge.model.recipe import Clip, Event, Recipe
 from beastforge.rig.skeleton import BuiltSkeleton
 
@@ -64,6 +68,10 @@ def manifest_json(manifest: Manifest) -> dict[str, Any]:
     for volume in payload.get("volumes", []):
         if volume.get("bone") is None:
             volume.pop("bone", None)
+    for part in payload.get("parts", []):
+        for control in part.get("controls", []):
+            if control.get("range") is None:
+                control.pop("range", None)
     return payload
 
 
@@ -79,26 +87,42 @@ def build_manifest(
     textures: list[TextureImage],
     tool_version: str,
     texforge_version: str,
+    parts: list[ResolvedPart] | None = None,
 ) -> Manifest:
     """Assemble the canonical manifest model for one built creature."""
-    clip_durations = {clip.name: clip.duration for clip in baked_clips}
+    recipe_by_clip = {clip.name: clip for clip in recipe.clips}
+    ordered = [clip for clip in baked_clips if clip.name in recipe_by_clip]
+    ordered += sorted(
+        (clip for clip in baked_clips if clip.name not in recipe_by_clip),
+        key=lambda clip: clip.name,
+    )
+    by_core = {clip.name: clip for clip in ordered}
+    clips_model: list[BakedClip] = []
+    for core in CORE_CLIPS:
+        if core in by_core:
+            clips_model.append(by_core.pop(core))
+    clips_model.extend(sorted(by_core.values(), key=lambda clip: clip.name))
+
     clips: list[ManifestClip] = []
     events: list[ManifestEvent] = []
-    for clip in ordered_clips(recipe.clips):
-        duration = clip_durations.get(clip.name, resolve_duration(clip))
+    for baked in clips_model:
         clips.append(
             ManifestClip(
-                name=clip.name,
-                duration=duration,
-                loop=clip.loop,
-                generator=clip.generator,
+                name=baked.name,
+                duration=baked.duration,
+                loop=baked.loop,
+                generator=baked.generator,
+                source=baked.source,
             )
         )
-        for event in clip.events:
+        declared = recipe_by_clip.get(baked.name)
+        if declared is None:
+            continue
+        for event in declared.events:
             time = event_time(event)
             if time is None:
                 continue
-            events.append(ManifestEvent(clip=clip.name, time=time, name=event.name))
+            events.append(ManifestEvent(clip=baked.name, time=time, name=event.name))
 
     texture_by_material = {texture.material: texture for texture in textures}
     materials: list[ManifestMaterial] = []
@@ -122,8 +146,34 @@ def build_manifest(
         )
 
     bounds_min, bounds_max = mesh.bounds()
+    manifest_parts = [
+        ManifestPart(
+            name=part.name,
+            preset=part.preset,
+            presetVersion=part.preset_version,
+            presetSha256=part.preset_sha256,
+            family=part.family,
+            controls=[
+                ManifestControl(
+                    address=control.address,
+                    name=control.name,
+                    joint=control.joint,
+                    axis=[float(value) for value in control.axis],
+                    mode=control.mode,
+                    unbounded=control.unbounded,
+                    range=ManifestControlRange(min=control.range.min, max=control.range.max)
+                    if control.range is not None
+                    else None,
+                    default=control.default,
+                    units=control.units,
+                )
+                for control in part.controls
+            ],
+        )
+        for part in parts or []
+    ]
     return Manifest(
-        schemaVersion="1.0",
+        schemaVersion="1.1",
         toolVersion=tool_version,
         creature=ManifestCreature(
             name=recipe.meta.name,
@@ -151,6 +201,7 @@ def build_manifest(
             ],
         ),
         clips=clips,
+        parts=manifest_parts,
         events=events,
         sockets=[
             ManifestSocket(

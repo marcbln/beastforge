@@ -16,13 +16,16 @@ meta:        # catalog identity (required)
 params:      # declared knobs (required, may be [])
 budgets:     # measured-value ceilings (required)
 skeleton:    # bones + chains — declared first (required)
-surfaces:    # skinned body regions bound to bones (required)
+surfaces:    # hand-authored skinned regions (optional, may be [])
+parts:       # reusable preset instances (optional, may be [])
 materials:   # texforge texture references (required, may be [])
-clips:       # clip generators + events (required)
+clips:       # clip generators + events (optional, may be [])
 sockets:     # attachment points (optional)
 volumes:     # hit / weak-point / collision proxies (required; >=1 hit)
 phases:      # boss phase thresholds (required for category boss)
 ```
+
+At least one of `surfaces` / `parts` must produce geometry.
 
 ## Identifiers
 
@@ -70,8 +73,9 @@ skeleton:
 
 ## Surfaces
 
-The only v1 mode is `sweep`. Kinds are `limb-tube`, `torso-shell`, and
-`rigid-part`.
+The only v1 mode is `sweep`. Kinds are `swept-solid`, `shell`, and `rigid-part`;
+`limb-tube` and `torso-shell` remain accepted aliases. Every kind is capped and
+therefore closed.
 
 ```yaml
 surfaces:
@@ -114,6 +118,62 @@ surfaces:
   `radial_noise`, `squash`, `scale`.
 - A rigid part binds to exactly one bone with weight 1.0 and is capped.
 - Any `mode` other than `sweep` is rejected with `surface-unsupported-mode`.
+- Every surface must be a closed solid. Caps are unconditional; there is no
+  `open` or `two-sided` option.
+
+## Part instances
+
+A recipe may assemble reusable presets instead of, or alongside, hand-authored
+surfaces. Presets live at `library/parts/<preset>/<MAJOR.MINOR.PATCH>.yaml` and
+are immutable once published.
+
+```yaml
+parts:
+  - name: front-left-leg
+    preset: organic-leg
+    preset_version: "1.0.0"
+    bind: {upper: upper-fl, lower: lower-fl, foot: foot-fl}
+    overrides: {radius-end: 0.045}
+    material: hide
+```
+
+- `name` is unique across surfaces and parts.
+- `preset_version` is an exact pin, never a range. Missing names/versions fail
+  with `part-preset-missing` / `part-preset-version-missing`.
+- `bind` maps every `@slot` used by the preset (surface, controls, auto) to an
+  existing bone. Extras and unbound slots are errors.
+- `overrides` use the closed vocabulary `radius-start`, `radius-end`, `rings`,
+  `segments`, `blend`, `taper-start`, `taper-end`, `twist`, `noise-amplitude`,
+  `noise-frequency`, `noise-seed`, `squash-x/y/z`, and `scale-x/y/z`. Omitted keys
+  keep the preset value; nested objects are never replaced wholesale.
+- `material` overrides the preset surface material and must be declared in
+  `materials[]`.
+- A recipe with neither `surfaces` nor `parts` fails with `recipe-empty-geometry`.
+
+## Controls and automatic motion
+
+Controls and automatic behaviours may be declared on a preset or overridden by
+name on an instance. Control joints may be `@slots`; they resolve to concrete
+bones and publish an address of `<part>/<control>` in manifest 1.1.
+
+```yaml
+controls:
+  - {name: swing, joint: "@upper", axis: [1, 0, 0], mode: rotation,
+     range: {min: -35, max: 35}, default: 0, units: deg}
+
+auto:
+  - {name: breathe, kind: breathe, joint: "@spine-2",
+     amplitude: 0.03, period: 2.0, phase: 0}
+```
+
+- Rotation controls use `units: deg`; translation controls use `units: m`.
+- `unbounded: true` forbids a `range`; a range without `unbounded` means bounded.
+- Automatic kinds are `breathe`, `bob`, `sway`, and `rotate`. They are baked into
+  every authored clip, but an explicit generator wins for any joint it animates.
+- If `clips` is empty and automatic behaviours exist, one `baseline` clip is
+  synthesized with `source: "automatic"`.
+- Core clips are required only when `meta.category != "other"` and at least one
+  clip is authored.
 
 ## Materials
 

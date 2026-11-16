@@ -10,6 +10,8 @@ from beastforge.config import Settings, find_library_root, find_texforge_library
 from beastforge.library import library_paths, project_relative, resolve_recipe_path
 from beastforge.model.findings import ValidationFinding
 from beastforge.model.loader import RecipeParseError, load_recipe
+from beastforge.parts.registry import PresetRegistry
+from beastforge.parts.resolve import resolve_parts
 from beastforge.validation.gate import error_findings, run_gate
 
 
@@ -54,19 +56,26 @@ def _check_one(
     settings: Settings,
     texforge_root: Path | None,
     cwd: Path | None,
+    library_root: Path | None = None,
 ) -> tuple[list[ValidationFinding], str]:
     label = project_relative(path, cwd=cwd)
     try:
         recipe, document = load_recipe(path, recipe_label=label)
     except RecipeParseError as exc:
         return exc.findings, recipe_name_from_path(path)
-    findings = run_gate(
-        recipe,
-        recipe_label=label,
-        file_stem=path.stem,
-        document=document,
-        settings=settings,
-        texforge_root=texforge_root,
+    registry = PresetRegistry.from_library_root(library_root, cwd=cwd)
+    resolution = resolve_parts(recipe, registry, recipe_label=label)
+    findings = list(resolution.findings)
+    findings.extend(
+        run_gate(
+            recipe,
+            recipe_label=label,
+            file_stem=path.stem,
+            document=document,
+            settings=settings,
+            texforge_root=texforge_root,
+            resolved_parts=resolution.parts,
+        )
     )
     return findings, recipe.meta.name
 
@@ -84,7 +93,11 @@ def validate_library(settings: Settings, *, cwd: Path | None = None) -> Validate
     creatures: list[str] = []
     for path in library_paths(root):
         path_findings, name = _check_one(
-            path, settings=settings, texforge_root=texforge_root, cwd=cwd
+            path,
+            settings=settings,
+            texforge_root=texforge_root,
+            cwd=cwd,
+            library_root=root,
         )
         findings.extend(path_findings)
         creatures.append(name)
@@ -102,7 +115,13 @@ def validate_recipe(source: str, settings: Settings, *, cwd: Path | None = None)
     path = resolve_recipe_path(source, settings, cwd=cwd)
     root = find_library_root(settings, cwd=cwd)
     texforge_root = find_texforge_library(settings, library_root=root)
-    findings, name = _check_one(path, settings=settings, texforge_root=texforge_root, cwd=cwd)
+    findings, name = _check_one(
+        path,
+        settings=settings,
+        texforge_root=texforge_root,
+        cwd=cwd,
+        library_root=root,
+    )
     valid = not error_findings(findings)
     return ValidateOutcome(
         valid=valid,

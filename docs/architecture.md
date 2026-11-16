@@ -82,6 +82,34 @@ flowchart LR
 | `viewer/assets.py` | `importlib.resources` locator for packaged frontend | no |
 | `viewer/static/` | buildless ES-module frontend; no Node or bundler | browser |
 
+## Closed geometry and part presets
+
+Every generated part is a **closed solid**: every undirected edge is shared by
+exactly two faces, the two incident faces traverse it in opposite directions,
+the signed volume is positive, and no triangle is degenerate. Swept solids and
+shells call `sweep_surface(..., caps=True)`; rigid parts were already capped.
+`geometry/closure.py` analyzes each `SurfaceRange` independently, so parts may
+overlap at a joint without the assembled asset needing to be one manifold.
+`validation/closure.py` turns a failed report into `surface-open`,
+`surface-non-manifold`, `surface-winding-invalid`, or `surface-degenerate`.
+There is no open-surface or two-sided-rendering escape hatch.
+
+Reusable parts live under `library/parts/<name>/<version>.yaml` as immutable
+presets. A preset surface uses `@slot` bone roles; a recipe `parts[]` entry pins
+an exact version, binds every slot to a real bone, and may override a closed set
+of parameters. `parts/registry.py` is the sorted filesystem adapter;
+`parts/resolve.py` is pure and returns `ResolvedPart` values plus findings. The
+resolved surfaces are appended after hand-authored `surfaces[]`, so closure,
+skinning, materials, and budgets see one ordered list. The canonical build digest
+includes the pinned preset documents, so the viewer cache and manifest provenance
+stay deterministic.
+
+Controls are published as `parts[].controls[]` with a unique `part/control`
+address. Automatic behaviours (`breathe`, `bob`, `sway`, `rotate`) are baked into
+every authored clip, but a generator always wins on a joint it animates. When a
+recipe has automatic behaviours and no authored clips, one deterministic
+`baseline` clip is synthesized with `source: "automatic"`.
+
 ## Viewer component
 
 The viewer is a read-only consumer of the same packages `render` produces. It

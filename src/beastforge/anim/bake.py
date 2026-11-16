@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 
 import numpy as np
 
-from beastforge.anim.registry import build_animation, normalize_clip_params
+from beastforge.anim.auto import auto_functions, baseline_duration
+from beastforge.anim.registry import Delta, build_animation, normalize_clip_params
 from beastforge.model.errors import BeastforgeError
+from beastforge.model.parts import ResolvedAuto
 from beastforge.model.recipe import Clip, Recipe
 from beastforge.rig.skeleton import BuiltSkeleton, quat_multiply, quat_normalize
 
@@ -33,6 +36,7 @@ class BakedClip:
     generator: str
     ticks: int
     tracks: list[JointTrack]
+    source: str = "authored"
 
 
 def resolve_duration(clip: Clip) -> float:
@@ -83,17 +87,31 @@ def bake_clip(
     recipe: Recipe,
     skeleton: BuiltSkeleton,
     seed: str,
+    *,
+    autos: list[ResolvedAuto] | None = None,
 ) -> BakedClip:
-    """Bake one clip into local joint TRS arrays sampled at ~60 Hz."""
+    """Bake one clip into local joint TRS arrays sampled at ~60 Hz.
+
+    Explicit generator motion always wins for a joint it animates; automatic
+    behaviours fill only the joints the generator left alone.
+    """
     duration = resolve_duration(clip)
-    params = normalize_clip_params(clip)
-    functions = build_animation(recipe, skeleton, clip, params, duration, clip.loop)
+    functions: dict[str, Callable[[float], Delta]] = {}
+    if clip.generator == "baseline":
+        source = "automatic"
+    else:
+        params = normalize_clip_params(clip)
+        functions.update(build_animation(recipe, skeleton, clip, params, duration, clip.loop))
+        source = "authored"
+    for name, function in auto_functions(autos or []).items():
+        if name not in functions:
+            functions[name] = function
     times = sample_times(duration)
     tracks: list[JointTrack] = []
 
     for name in skeleton.names:
-        function = functions.get(name)
-        if function is None:
+        evaluator = functions.get(name)
+        if evaluator is None:
             continue
         rest = skeleton.local_transforms[name]
         rest_translation = np.asarray(rest.translation, dtype=np.float64)
@@ -106,7 +124,7 @@ def bake_clip(
             evaluate_at = time
             if clip.loop and index == len(times) - 1:
                 evaluate_at = 0.0
-            delta = function(float(evaluate_at))
+            delta = evaluator(float(evaluate_at))
             translations.append(rest_translation + np.asarray(delta.translation, dtype=np.float64))
             rotations.append(
                 quat_normalize(
@@ -140,6 +158,7 @@ def bake_clip(
         generator=clip.generator,
         ticks=int(round(duration * 60.0)),
         tracks=tracks,
+        source=source,
     )
 
 
@@ -147,6 +166,15 @@ def bake_clips(
     recipe: Recipe,
     skeleton: BuiltSkeleton,
     seed: str,
+    *,
+    autos: list[ResolvedAuto] | None = None,
 ) -> list[BakedClip]:
-    """Bake every declared clip in recipe order."""
-    return [bake_clip(clip, recipe, skeleton, seed) for clip in recipe.clips]
+    """Bake every authored clip; synthesize a baseline when clips are empty."""
+    autos = autos or []
+    if not recipe.clips:
+        if not autos:
+            return []
+        duration = baseline_duration(autos, max_ticks=recipe.budgets.max_clip_ticks)
+        baseline = Clip(name="baseline", generator="baseline", duration=duration, loop=True)
+        return [bake_clip(baseline, recipe, skeleton, seed, autos=autos)]
+    return [bake_clip(clip, recipe, skeleton, seed, autos=autos) for clip in recipe.clips]

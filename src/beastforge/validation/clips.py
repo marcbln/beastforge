@@ -24,19 +24,21 @@ def check_clips(
     """Check reserved clips, durations, generator parameters, and events."""
     findings: list[ValidationFinding] = []
     names = [clip.name for clip in recipe.clips]
-    for core in CORE_CLIPS:
-        if core not in names:
-            findings.append(
-                finding(
-                    "clip-missing-core",
-                    f"Required core clip {core!r} is missing.",
-                    recipe=recipe_label,
-                    path="clips",
-                    expected=f"reserved clips: {', '.join(CORE_CLIPS)}",
-                    actual=names,
-                    remedy=f"Add a clip named {core!r} using a documented generator.",
+    requires_core = recipe.meta.category != "other" and len(recipe.clips) > 0
+    if requires_core:
+        for core in CORE_CLIPS:
+            if core not in names:
+                findings.append(
+                    finding(
+                        "clip-missing-core",
+                        f"Required core clip {core!r} is missing.",
+                        recipe=recipe_label,
+                        path="clips",
+                        expected=f"reserved clips: {', '.join(CORE_CLIPS)}",
+                        actual=names,
+                        remedy=f"Add a clip named {core!r} using a documented generator.",
+                    )
                 )
-            )
     for duplicate in duplicates(names):
         findings.append(
             finding(
@@ -52,6 +54,19 @@ def check_clips(
 
     for clip in recipe.clips:
         path = f"clips[{clip.name}]"
+        if clip.name == "baseline":
+            findings.append(
+                finding(
+                    "clip-duplicate",
+                    "The clip name 'baseline' is reserved for the synthesized "
+                    "automatic-motion clip.",
+                    recipe=recipe_label,
+                    path=path,
+                    expected="an authored clip name other than baseline",
+                    actual=clip.name,
+                    remedy="Rename the authored clip; remove automatic motion to drop baseline.",
+                )
+            )
         identifier = check_identifier(clip.name, recipe=recipe_label, path=path)
         if identifier is not None:
             findings.append(identifier)

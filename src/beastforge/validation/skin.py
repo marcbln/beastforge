@@ -6,6 +6,7 @@ import numpy as np
 
 from beastforge.geometry.mesh import Mesh
 from beastforge.model.findings import ValidationFinding
+from beastforge.model.parts import ResolvedPart
 from beastforge.model.recipe import Recipe
 from beastforge.rig.skeleton import BuiltSkeleton
 from beastforge.validation.common import finding
@@ -26,8 +27,9 @@ def check_skin(
     skeleton: BuiltSkeleton,
     *,
     recipe_label: str,
+    parts: list[ResolvedPart] | None = None,
 ) -> list[ValidationFinding]:
-    """Check weight sums, influence counts, rigid bindings, bind pose, winding."""
+    """Check weight sums, influence counts, rigid bindings, and bind pose."""
     findings: list[ValidationFinding] = []
     if mesh.vertex_count == 0 or mesh.triangle_count == 0:
         findings.append(
@@ -89,7 +91,8 @@ def check_skin(
         )
 
     # Rigid parts bind to exactly one bone with weight 1.0.
-    for surface_range, surface in zip(mesh.surfaces, recipe.surfaces, strict=False):
+    surfaces = [*recipe.surfaces, *(part.surface for part in parts or [])]
+    for surface_range, surface in zip(mesh.surfaces, surfaces, strict=False):
         if surface.kind != "rigid-part":
             continue
         start = surface_range.vertex_offset
@@ -132,46 +135,4 @@ def check_skin(
                 )
             )
             break
-
-    # Winding: each surface's signed volume should be non-negative.
-    for surface_range in mesh.surfaces:
-        index_end = surface_range.index_offset + surface_range.index_count
-        indices = mesh.indices[surface_range.index_offset : index_end]
-        positions = mesh.positions
-        triangles = positions[indices]
-        center = triangles.reshape(-1, 3).mean(axis=0)
-        a = triangles[:, 0] - center
-        b = triangles[:, 1] - center
-        c = triangles[:, 2] - center
-        signed = float(np.sum(np.einsum("ij,ij->i", a, np.cross(b, c))))
-        if signed < 0.0:
-            findings.append(
-                finding(
-                    "surface-winding-invalid",
-                    f"Surface {surface_range.name!r} has inward-facing triangles.",
-                    recipe=recipe_label,
-                    path=f"surfaces[{surface_range.name}]",
-                    expected="outward winding",
-                    actual=signed,
-                    remedy="Reverse triangle winding so normals point outward.",
-                )
-            )
-
-    # Degenerate faces indicate a self-intersecting or collapsed construction.
-    triangles = mesh.positions[mesh.indices]
-    face = np.cross(triangles[:, 1] - triangles[:, 0], triangles[:, 2] - triangles[:, 0])
-    areas = np.linalg.norm(face, axis=1) * 0.5
-    degenerate = np.where(areas <= 1e-12)[0]
-    if degenerate.size:
-        findings.append(
-            finding(
-                "surface-self-intersection",
-                f"{degenerate.size} triangles are degenerate.",
-                recipe=recipe_label,
-                path="surfaces",
-                expected="positive-area triangles",
-                actual=int(degenerate.size),
-                remedy="Increase rings/segments or reduce radial noise.",
-            )
-        )
     return findings

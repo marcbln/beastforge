@@ -1,0 +1,23 @@
+name: vehicle-wing
+family: vehicle
+version: "1.0.0"
+description: "Closed tapered wing with a sweep control."
+surface:
+  mode: sweep
+  kind: swept-solid
+  bones: ["@root", "@tip"]
+  rings: 8
+  segments: 6
+  radius: {start: 0.16, end: 0.05}
+  blend: 0.2
+  material: chitin
+params:
+  - {name: radius-start, type: float, min: 0.02, max: 0.8, unit: m,
+     description: "Radius at the root."}
+  - {name: radius-end, type: float, min: 0.01, max: 0.8, unit: m,
+     description: "Radius at the tip."}
+  - {name: rings, type: int, min: 3, max: 24, unit: count,
+     description: "Rings along the wing."}
+controls:
+  - {name: sweep, joint: "@root", axis: [0, 0, 1], mode: rotation,
+     range: {min: -15, max: 15}, default: 0, units: deg}

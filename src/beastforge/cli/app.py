@@ -12,6 +12,7 @@ from beastforge.cli.common import GlobalState, emit_error
 from beastforge.cli.library import list_command
 from beastforge.cli.meta_cmds import about_command, version_command
 from beastforge.cli.params import params_command
+from beastforge.cli.parts import parts_command
 from beastforge.cli.render import render_command
 from beastforge.cli.showroom import showroom_command
 from beastforge.cli.validate import validate_command
@@ -71,6 +72,7 @@ def root(
 
 app.command("list", context_settings=HELP_CONTEXT)(list_command)
 app.command("params", context_settings=HELP_CONTEXT)(params_command)
+app.command("parts", context_settings=HELP_CONTEXT)(parts_command)
 app.command("render", context_settings=HELP_CONTEXT)(render_command)
 app.command("validate", context_settings=HELP_CONTEXT)(validate_command)
 app.command("showroom", context_settings=HELP_CONTEXT)(showroom_command)

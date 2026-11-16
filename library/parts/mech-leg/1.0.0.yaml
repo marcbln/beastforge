@@ -1,0 +1,29 @@
+name: mech-leg
+family: mechanical
+version: "1.0.0"
+description: "Closed articulated mechanical leg with swing and knee lift."
+surface:
+  mode: sweep
+  kind: swept-solid
+  bones: ["@hip", "@knee", "@ankle"]
+  rings: 10
+  segments: 8
+  radius: {start: 0.14, end: 0.08}
+  blend: 0.2
+  modifiers:
+    squash: [1.0, 1.0, 1.0]
+  material: chitin
+params:
+  - {name: radius-start, type: float, min: 0.03, max: 0.6, unit: m,
+     description: "Radius at the hip."}
+  - {name: radius-end, type: float, min: 0.02, max: 0.6, unit: m,
+     description: "Radius at the ankle."}
+  - {name: rings, type: int, min: 4, max: 24, unit: count,
+     description: "Rings along the leg."}
+  - {name: segments, type: int, min: 4, max: 24, unit: count,
+     description: "Radial segments per ring."}
+controls:
+  - {name: swing, joint: "@hip", axis: [1, 0, 0], mode: rotation,
+     range: {min: -40, max: 40}, default: 0, units: deg}
+  - {name: lift, joint: "@knee", axis: [1, 0, 0], mode: rotation,
+     range: {min: -70, max: 20}, default: 0, units: deg}

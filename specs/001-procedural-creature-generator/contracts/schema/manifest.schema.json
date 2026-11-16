@@ -37,9 +37,14 @@
     "skeleton": { "$ref": "#/$defs/skeleton" },
     "clips": {
       "type": "array",
-      "minItems": 5,
+      "minItems": 0,
       "items": { "$ref": "#/$defs/clip" },
-      "description": "Must contain the reserved clips idle, locomotion, attack, hurt, death; extra clips are allowed."
+      "description": "The five reserved clips are required for non-other assets with authored clips; anatomy-neutral or automatic-only assets may have fewer or none."
+    },
+    "parts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/part" },
+      "description": "Optional resolved part instances and their published control contracts (manifest 1.1)."
     },
     "events": {
       "type": "array",
@@ -133,7 +138,11 @@
         "duration": { "type": "number", "exclusiveMinimum": 0 },
         "loop": { "type": "boolean" },
         "generator": {
-          "enum": ["breathe", "gait", "hover-bob", "recoil", "telegraph-attack", "death-collapse"]
+          "enum": ["breathe", "gait", "hover-bob", "recoil", "telegraph-attack", "death-collapse", "baseline"]
+        },
+        "source": {
+          "enum": ["authored", "automatic"],
+          "description": "Optional in 1.1; absence means authored."
         }
       }
     },
@@ -219,6 +228,46 @@
           "minLength": 1,
           "description": "Human-readable warning that changing playback rate scales event times proportionally."
         }
+      }
+    },
+    "part": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "preset", "presetVersion", "presetSha256", "family", "controls"],
+      "properties": {
+        "name": { "type": "string" },
+        "preset": { "type": "string" },
+        "presetVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+        "presetSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "family": { "enum": ["organic", "mechanical", "vehicle"] },
+        "controls": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/control" }
+        }
+      }
+    },
+    "control": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["address", "name", "joint", "axis", "mode", "unbounded", "default", "units"],
+      "properties": {
+        "address": { "type": "string" },
+        "name": { "type": "string" },
+        "joint": { "type": "string" },
+        "axis": { "$ref": "#/$defs/vec3" },
+        "mode": { "enum": ["rotation", "translation"] },
+        "unbounded": { "type": "boolean" },
+        "range": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["min", "max"],
+          "properties": {
+            "min": { "type": "number" },
+            "max": { "type": "number" }
+          }
+        },
+        "default": { "type": "number" },
+        "units": { "enum": ["deg", "m"] }
       }
     },
     "budgets": {

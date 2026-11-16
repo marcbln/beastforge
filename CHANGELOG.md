@@ -42,11 +42,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `BEASTFORGE_VIEWER_SMOKE=1`).
 - Layered test suite: unit, contract, integration, determinism, defect corpus,
   golden, and consumer imports.
+- Closed-solid parts: swept solids and shells are capped, and a per-part closure
+  gate rejects open, non-manifold, mis-wound, or degenerate geometry.
+- Immutable, anatomy-neutral part presets under `library/parts/<name>/<version>.yaml`
+  with `@slot` bindings, canonical partial overrides, and a deterministic registry.
+- Recipe `parts[]` instances, `swept-solid`/`shell` neutral surface kinds, and
+  optional `surfaces`/`clips` with `recipe-empty-geometry` enforcement.
+- Control contracts published as manifest 1.1 `parts[].controls[]` with unique
+  `part/control` addresses; read-only Controls tab in the viewer.
+- Declarative `breathe`/`bob`/`sway`/`rotate` automatic motion baked into every
+  clip, plus a synthesized `baseline` clip with `source: "automatic"`.
+- `beastforge parts` preset discovery command (human and `--json`) and two
+  example assemblies, `iron-warden` and `hover-skiff`.
+- Pinned gameplay-facts snapshot and a no-double-sided contract test.
 
 ### Changed
 - Initial project README and changelog replaced with the feature documentation
   set (architecture, development, API, recipes, showroom, CLI cheat sheet,
   environment variables).
+- Manifest schema is now 1.1 with additive `parts`, `controls`, and
+  `clips[].source`; 1.0 documents remain readable.
+- Core clips are required only for non-`other` assets that author clips; a
+  root-only skeleton and parts-only geometry are valid.
+- Regenerated library goldens and showroom references for the closed caps.
 
 ### Fixed
 - The published viewer rendered an empty gallery because `three.module.js`
@@ -56,6 +74,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   as an error on every load, and added a packaged favicon to avoid a 404.
 - Allowed `blob:` in `connect-src` so `GLTFLoader` can fetch embedded textures
   from GLB files without CSP violations.
+- Hollow assets: limb tubes and torso shells are now capped, so backface culling
+  never reveals an open end or interior.
+- The viewer's manifest inspector preserves the event-play controls and now also
+  renders a read-only Controls tab.
 
 ## [0.1.0] - 2026-11-14
 

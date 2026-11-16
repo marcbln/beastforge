@@ -11,6 +11,13 @@ The primary contract is in [specs/001-procedural-creature-generator/](specs/001-
 one standard asset, one manifest, byte-identical output for the same recipe,
 parameters, and tool version.
 
+Every generated part is a **closed solid** (watertight, manifold, outward-wound,
+no degenerate faces). Backface culling stays on; no two-sided material is ever
+emitted. Reusable, anatomy-neutral parts live in an immutable, versioned preset
+library under `library/parts/`, and recipes may assemble them with `parts[]`,
+`@slot` bindings, control contracts, and automatic motion. See
+[specs/003-closed-part-library/](specs/003-closed-part-library/).
+
 ## Prerequisites
 
 - Python 3.12+ (3.12 is the target)
@@ -36,6 +43,10 @@ uv run beastforge list --category boss --json
 
 # Inspect declared parameters without generating
 uv run beastforge params ridge-stalker
+
+# Discover reusable part presets
+uv run beastforge parts
+uv run beastforge parts organic-leg --json
 
 # Generate one creature package
 uv run beastforge render ridge-stalker -o /tmp/creatures

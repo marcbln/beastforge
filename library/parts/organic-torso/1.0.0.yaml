@@ -1,0 +1,31 @@
+name: organic-torso
+family: organic
+version: "1.0.0"
+description: "Closed organic torso shell with an ambient breathing baseline."
+surface:
+  mode: sweep
+  kind: shell
+  bones: ["@spine-1", "@spine-2", "@spine-3"]
+  rings: 12
+  segments: 16
+  radius: {start: 0.38, end: 0.28}
+  blend: 0.25
+  modifiers:
+    taper: {start: 1.0, end: 0.85}
+    squash: [1.0, 0.9, 1.0]
+  material: hide
+params:
+  - {name: radius-start, type: float, min: 0.05, max: 1.5, unit: m,
+     description: "Radius at the root."}
+  - {name: radius-end, type: float, min: 0.05, max: 1.5, unit: m,
+     description: "Radius at the tip."}
+  - {name: rings, type: int, min: 4, max: 32, unit: count,
+     description: "Rings along the torso."}
+  - {name: segments, type: int, min: 6, max: 32, unit: count,
+     description: "Radial segments per ring."}
+  - {name: taper-start, type: float, min: 0.2, max: 2.0, unit: ratio,
+     description: "Radius multiplier at the root."}
+  - {name: taper-end, type: float, min: 0.2, max: 2.0, unit: ratio,
+     description: "Radius multiplier at the tip."}
+auto:
+  - {name: breathe, kind: breathe, joint: "@spine-2", amplitude: 0.03, period: 3.0, phase: 0}

@@ -1,0 +1,24 @@
+name: mech-armor-plate
+family: mechanical
+version: "1.0.0"
+description: "Closed rigid armor plate."
+surface:
+  mode: sweep
+  kind: rigid-part
+  bones: ["@mount"]
+  rigid_bone: "@mount"
+  rings: 4
+  segments: 6
+  radius: {start: 0.22, end: 0.22}
+  material: chitin
+params:
+  - {name: rings, type: int, min: 2, max: 12, unit: count,
+     description: "Rings along the plate."}
+  - {name: segments, type: int, min: 3, max: 16, unit: count,
+     description: "Radial segments per ring."}
+  - {name: scale-x, type: float, min: 0.1, max: 5.0, unit: ratio,
+     description: "X scale multiplier."}
+  - {name: scale-y, type: float, min: 0.1, max: 5.0, unit: ratio,
+     description: "Y scale multiplier."}
+  - {name: scale-z, type: float, min: 0.1, max: 5.0, unit: ratio,
+     description: "Z scale multiplier."}

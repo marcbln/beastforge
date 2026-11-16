@@ -1,0 +1,26 @@
+name: organic-tail
+family: organic
+version: "1.0.0"
+description: "Closed organic tail with a sway control and ambient sway."
+surface:
+  mode: sweep
+  kind: swept-solid
+  bones: ["@base", "@mid", "@tip"]
+  rings: 9
+  segments: 8
+  radius: {start: 0.11, end: 0.03}
+  blend: 0.25
+  material: hide
+params:
+  - {name: radius-start, type: float, min: 0.02, max: 0.5, unit: m,
+     description: "Radius at the root."}
+  - {name: radius-end, type: float, min: 0.01, max: 0.5, unit: m,
+     description: "Radius at the tip."}
+  - {name: rings, type: int, min: 4, max: 24, unit: count,
+     description: "Rings along the tail."}
+controls:
+  - {name: sway, joint: "@base", axis: [0, 1, 0], mode: rotation,
+     range: {min: -30, max: 30}, default: 0, units: deg}
+auto:
+  - {name: sway, kind: sway, joint: "@mid", axis: [0, 1, 0],
+     amplitude: 12, period: 2.4, phase: 0}

@@ -15,7 +15,13 @@ beastforge list
 beastforge list --json
 beastforge list --category boss --json
 beastforge params ridge-stalker --json
+beastforge parts --json
+beastforge parts organic-leg --version 1.0.0 --json
 ```
+
+`beastforge parts` is the read-only discovery surface for the immutable preset
+library (`library/parts/<name>/<version>.yaml`). It lists parameters, controls,
+and automatic behaviours; it never generates geometry.
 
 `--json` writes only the machine document to stdout. Progress, warnings, and
 errors go to stderr. Exit codes: `0` success, `1` IO, `2` usage, `3` invalid
@@ -54,6 +60,34 @@ change produces a new URL and stale requests return HTTP `409 stale-asset`.
 `--json` emits one `ServeReport`/`ExportReport`; progress and warnings go to
 stderr.
 
+## Use presets
+
+Presets are immutable, anatomy-neutral parts. A recipe may replace a
+hand-authored surface with a pinned instance without moving its name or gameplay
+references:
+
+```yaml
+parts:
+  - name: front-left-leg
+    preset: organic-leg
+    preset_version: "1.0.0"
+    bind: {upper: upper-fl, lower: lower-fl, foot: foot-fl}
+    overrides: {radius-end: 0.045}
+    material: hide
+```
+
+- `bind` covers every `@slot`; extras and missing slots are errors.
+- Overrides use the closed canonical vocabulary and never replace nested objects
+  wholesale.
+- Preset versions are immutable: change a preset by adding a new version file.
+- Controls publish `parts[].controls[]` with a unique `part/control` address.
+- `breathe`/`bob`/`sway`/`rotate` bake into every clip; explicit clip motion
+  wins on the same joint. With no authored clips, one `baseline` clip is
+  synthesized with `source: "automatic"`.
+- Every generated part must pass the closure gate: open, non-manifold, mis-wound,
+  or degenerate geometry fails validation. Never disable culling or emit a
+  two-sided material as a workaround.
+
 ## Read the manifest
 
 The manifest is the gameplay contract. Never read generator source to answer
@@ -68,6 +102,8 @@ jq -r '.sockets[] | select(.name=="maw") | "\(.target) + \(.offset)"' package.ma
 - `schemaVersion` is `MAJOR.MINOR`: same major = read and ignore unknown fields;
   different major = fail with `manifest-schema-unsupported`.
 - `events[]` is the authoritative timing source.
+- Manifest 1.1 adds optional `parts[]`, `parts[].controls[]`, and
+  `clips[].source` (`authored` or `automatic`); 1.0 documents remain readable.
 - `playback.eventTimeScaling` is `"proportional"`: changing playback rate scales
   event times by the same factor.
 - Units are metres, Y-up, forward −Z. `suggestedScale` is a uniform hint.

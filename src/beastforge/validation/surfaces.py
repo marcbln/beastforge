@@ -3,20 +3,29 @@
 from __future__ import annotations
 
 from beastforge.model.findings import ValidationFinding
-from beastforge.model.recipe import RadiusProfile, Recipe
+from beastforge.model.parts import ResolvedPart
+from beastforge.model.recipe import RadiusProfile, Recipe, Surface
 from beastforge.validation.common import check_identifier, duplicates, finding
 
-_KINDS = {"limb-tube", "torso-shell", "rigid-part"}
+_KINDS = {"limb-tube", "torso-shell", "rigid-part", "swept-solid", "shell"}
 
 
-def check_surfaces(recipe: Recipe, *, recipe_label: str) -> list[ValidationFinding]:
+def check_surfaces(
+    recipe: Recipe,
+    *,
+    recipe_label: str,
+    parts: list[ResolvedPart] | None = None,
+) -> list[ValidationFinding]:
     """Check modes, bone references, rigid bindings, and construction limits."""
     findings: list[ValidationFinding] = []
     bone_names = {bone.name for bone in recipe.skeleton.bones}
     by_name = {bone.name: bone for bone in recipe.skeleton.bones}
     seen: set[str] = set()
-    for surface in recipe.surfaces:
-        path = f"surfaces[{surface.name}]"
+    entries: list[tuple[str, Surface]] = [
+        (f"surfaces[{surface.name}]", surface) for surface in recipe.surfaces
+    ]
+    entries.extend((f"parts[{part.name}]", part.surface) for part in parts or [])
+    for path, surface in entries:
         if surface.name in seen:
             findings.append(
                 finding(
@@ -55,7 +64,10 @@ def check_surfaces(recipe: Recipe, *, recipe_label: str) -> list[ValidationFindi
                     path=f"{path}.kind",
                     expected="one of: " + ", ".join(sorted(_KINDS)),
                     actual=surface.kind,
-                    remedy="Use limb-tube, torso-shell, or rigid-part.",
+                    remedy=(
+                        "Use swept-solid, shell, rigid-part, or an accepted alias "
+                        "(limb-tube, torso-shell)."
+                    ),
                 )
             )
         if not surface.bones:
@@ -185,7 +197,7 @@ def check_surfaces(recipe: Recipe, *, recipe_label: str) -> list[ValidationFindi
                     remedy="Use a blend fraction such as 0.25.",
                 )
             )
-    for duplicate in duplicates([surface.name for surface in recipe.surfaces]):
+    for duplicate in duplicates([surface.name for _path, surface in entries]):
         if duplicate:  # already reported per-surface; this keeps ordering stable
             continue
     return findings

@@ -10,7 +10,9 @@ from beastforge.config import Settings, find_library_root
 from beastforge.model.errors import NotFoundError
 from beastforge.model.loader import RecipeParseError, load_yaml_document, parse_recipe
 from beastforge.model.recipe import Meta
-from beastforge.rng import recipe_digest
+from beastforge.parts.registry import PresetRegistry
+from beastforge.parts.resolve import resolve_parts
+from beastforge.rng import build_digest, recipe_digest
 
 
 @dataclass
@@ -73,6 +75,15 @@ def load_entry_with_document(
     document = load_yaml_document(path, recipe_label=label)
     recipe = parse_recipe(document, recipe_label=label)
     meta: Meta = recipe.meta
+    if recipe.parts:
+        root = path.resolve().parent.parent
+        registry = PresetRegistry.from_library_root(root, cwd=cwd)
+        resolution = resolve_parts(recipe, registry, recipe_label=label)
+        if resolution.findings:
+            raise RecipeParseError(resolution.findings)
+        digest = build_digest(document, registry.documents_for(recipe.parts))
+    else:
+        digest = recipe_digest(document)
     params = [
         {
             key: value
@@ -100,7 +111,7 @@ def load_entry_with_document(
         path=label,
         params=params,
     )
-    return entry, document, recipe_digest(document)
+    return entry, document, digest
 
 
 def scan(settings: Settings, *, cwd: Path | None = None) -> list[LibraryEntry]:

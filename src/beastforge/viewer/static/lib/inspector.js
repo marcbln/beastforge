@@ -1,9 +1,9 @@
 /**
- * Manifest inspector with three tabs: Manifest, Clips, Events.
+ * Manifest inspector with four tabs: Manifest, Clips, Events, Controls.
  *
  * Values are displayed verbatim from the manifest. Missing optional fields read
  * "not declared"; unknown fields are ignored for behaviour and shown in the
- * collapsible raw view.
+ * collapsible raw view. The Controls tab is read-only and never drives joints.
  */
 
 const NOT_DECLARED = "not declared";
@@ -49,7 +49,12 @@ function table(headers, rows) {
   } else {
     for (const values of rows) {
       const row = el("tr");
-      for (const value of values) row.append(el("td", {}, display(value)));
+      for (const value of values) {
+        const cell = el("td");
+        if (value instanceof Node) cell.append(value);
+        else cell.textContent = display(value);
+        row.append(cell);
+      }
       body.append(row);
     }
   }
@@ -153,24 +158,77 @@ function clipsPanel(manifest) {
   return panel;
 }
 
-function eventsPanel(manifest) {
+function eventPlayButton(event, onPlayEvent) {
+  const time = Number(event.time);
+  const label = `Play ${event.clip} into ${event.name} at ${Number.isFinite(time) ? time.toFixed(2) : event.time}s`;
+  const button = el(
+    "button",
+    { type: "button", class: "event-play", title: label, "aria-label": label },
+    "Play"
+  );
+  if (!onPlayEvent) {
+    button.disabled = true;
+    button.title = "Open this creature to play its events.";
+    return button;
+  }
+  button.addEventListener("click", () => onPlayEvent(event));
+  return button;
+}
+
+function eventsPanel(manifest, onPlayEvent) {
   const panel = el("div", { class: "tab-panel", role: "tabpanel" });
   panel.append(el("h3", {}, "Declared events"));
   panel.append(
     table(
-      ["clip", "time", "name"],
-      (manifest.events || []).map((event) => [event.clip, event.time, event.name])
+      ["clip", "time", "name", "movement"],
+      (manifest.events || []).map((event) => [
+        event.clip,
+        event.time,
+        event.name,
+        eventPlayButton(event, onPlayEvent),
+      ])
     )
   );
   return panel;
 }
 
-export function renderInspector(host, { manifest, raw }) {
+function controlsPanel(manifest) {
+  const panel = el("div", { class: "tab-panel", role: "tabpanel" });
+  panel.append(el("h3", {}, "Part controls"));
+  const parts = Array.isArray(manifest.parts) ? manifest.parts : [];
+  if (parts.length === 0) {
+    panel.append(el("p", {}, NOT_DECLARED));
+    return panel;
+  }
+  for (const part of parts) {
+    panel.append(
+      el("h4", {}, `${part.name} · ${part.preset} ${part.presetVersion} (${part.family})`)
+    );
+    panel.append(
+      table(
+        ["address", "joint", "axis", "mode", "range", "default", "units"],
+        (part.controls || []).map((control) => [
+          control.address,
+          control.joint,
+          control.axis,
+          control.mode,
+          control.unbounded ? "unbounded" : control.range,
+          control.default,
+          control.units,
+        ])
+      )
+    );
+  }
+  return panel;
+}
+
+export function renderInspector(host, { manifest, raw, onPlayEvent }) {
   host.textContent = "";
   const tabs = [
     { id: "manifest", label: "Manifest", build: () => manifestPanel(manifest, raw) },
     { id: "clips", label: "Clips", build: () => clipsPanel(manifest) },
-    { id: "events", label: "Events", build: () => eventsPanel(manifest) },
+    { id: "events", label: "Events", build: () => eventsPanel(manifest, onPlayEvent) },
+    { id: "controls", label: "Controls", build: () => controlsPanel(manifest) },
   ];
   const bar = el("div", { class: "tabs", role: "tablist", "aria-label": "Manifest views" });
   const body = el("div");

@@ -1,0 +1,22 @@
+name: vehicle-engine-bell
+family: vehicle
+version: "1.0.0"
+description: "Closed engine bell with a pitch control."
+surface:
+  mode: sweep
+  kind: swept-solid
+  bones: ["@mount"]
+  rings: 8
+  segments: 12
+  radius: {start: 0.18, end: 0.26}
+  material: chitin
+params:
+  - {name: radius-start, type: float, min: 0.03, max: 0.6, unit: m,
+     description: "Radius at the intake."}
+  - {name: radius-end, type: float, min: 0.03, max: 0.8, unit: m,
+     description: "Radius at the bell mouth."}
+  - {name: rings, type: int, min: 4, max: 24, unit: count,
+     description: "Rings along the bell."}
+controls:
+  - {name: pitch, joint: "@mount", axis: [1, 0, 0], mode: rotation,
+     range: {min: -10, max: 10}, default: 0, units: deg}

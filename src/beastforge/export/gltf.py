@@ -114,6 +114,8 @@ def _ordered_clips(clips: list[BakedClip]) -> list[BakedClip]:
 
 
 def _material_json(material: Material, texture_index: int) -> dict[str, Any]:
+    # Invariant: never emit doubleSided. Backface culling proves closed geometry;
+    # a two-sided material would hide an open part (FR-003, SC-008).
     return {
         "name": material.name,
         "pbrMetallicRoughness": {

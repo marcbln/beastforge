@@ -5,22 +5,26 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from beastforge.config import Settings
+from beastforge.config import Settings, find_library_root
 from beastforge.geometry.mesh import Mesh
 from beastforge.model.errors import BeastforgeError
 from beastforge.model.findings import ValidationFinding
 from beastforge.model.manifest import Manifest
+from beastforge.model.parts import ResolvedPart
 from beastforge.model.recipe import Recipe
 from beastforge.params import resolve_params
-from beastforge.pipeline import build_mesh
+from beastforge.parts.registry import PresetRegistry
+from beastforge.pipeline import build_mesh, preset_documents
 from beastforge.rig.skeleton import BuiltSkeleton, build_skeleton
-from beastforge.rng import recipe_digest, run_seed
+from beastforge.rng import build_digest, run_seed
 from beastforge.texture.texforge_adapter import TexforgeLibrary, check_materials
 from beastforge.validation.budgets import check_budgets
 from beastforge.validation.clips import check_clips
+from beastforge.validation.closure import check_closure
 from beastforge.validation.common import check_identifier, duplicates, finding
 from beastforge.validation.determinism import check_manifest, check_recipe_determinism
 from beastforge.validation.hooks import check_hooks
+from beastforge.validation.parts import check_geometry_present, check_parts
 from beastforge.validation.skeleton import check_skeleton
 from beastforge.validation.skin import check_skin
 from beastforge.validation.surfaces import check_surfaces
@@ -159,6 +163,15 @@ def check_recipe_metadata(
     return findings
 
 
+def _registry(settings: Settings | None) -> PresetRegistry:
+    """Resolve the preset library for a gate run, tolerating a missing library."""
+    try:
+        root = find_library_root(settings or Settings())
+    except BeastforgeError:
+        return PresetRegistry(None)
+    return PresetRegistry.from_library_root(root)
+
+
 def run_gate(
     recipe: Recipe,
     *,
@@ -171,13 +184,21 @@ def run_gate(
     mesh: Mesh | None = None,
     manifest: Manifest | dict[str, Any] | None = None,
     texforge_root: Path | None = None,
+    resolved_parts: list[ResolvedPart] | None = None,
 ) -> list[ValidationFinding]:
     """Run the full gate and return findings in documented group order."""
     findings: list[ValidationFinding] = []
     findings.extend(check_recipe_metadata(recipe, recipe_label=recipe_label, file_stem=file_stem))
+    findings.extend(check_geometry_present(recipe, recipe_label=recipe_label))
 
     resolution = resolve_params(recipe, overrides, recipe_label=recipe_label, strict=False)
     findings.extend(resolution.findings)
+
+    registry = _registry(settings)
+    if resolved_parts is None:
+        parts_resolution = check_parts(recipe, registry, recipe_label=recipe_label)
+        findings.extend(parts_resolution.findings)
+        resolved_parts = parts_resolution.parts
 
     skeleton_findings = check_skeleton(recipe, recipe_label=recipe_label)
     findings.extend(skeleton_findings)
@@ -197,15 +218,15 @@ def run_gate(
                 )
             )
 
-    surface_findings = check_surfaces(recipe, recipe_label=recipe_label)
+    surface_findings = check_surfaces(recipe, recipe_label=recipe_label, parts=resolved_parts)
     findings.extend(surface_findings)
 
+    payload = document if document is not None else recipe.model_dump(mode="json")
     if mesh is None and skeleton is not None:
         try:
-            payload = document if document is not None else recipe.model_dump(mode="json")
-            digest = recipe_digest(payload)
+            digest = build_digest(payload, preset_documents(resolved_parts))
             seed = run_seed(digest, resolution.values)
-            mesh = build_mesh(recipe, skeleton, seed)
+            mesh = build_mesh(recipe, skeleton, seed, resolved_parts=resolved_parts)
         except BeastforgeError as exc:
             findings.append(
                 finding(
@@ -232,7 +253,22 @@ def run_gate(
             )
 
     if mesh is not None and skeleton is not None:
-        findings.extend(check_skin(recipe, mesh, skeleton, recipe_label=recipe_label))
+        findings.extend(
+            check_skin(
+                recipe,
+                mesh,
+                skeleton,
+                recipe_label=recipe_label,
+                parts=resolved_parts,
+            )
+        )
+        findings.extend(
+            check_closure(
+                mesh,
+                recipe_label=recipe_label,
+                part_names={part.name for part in resolved_parts or []},
+            )
+        )
 
     findings.extend(
         check_clips(recipe, recipe_label=recipe_label, max_ticks=recipe.budgets.max_clip_ticks)
@@ -240,7 +276,9 @@ def run_gate(
     findings.extend(check_hooks(recipe, recipe_label=recipe_label))
 
     library = TexforgeLibrary(texforge_root)
-    findings.extend(check_materials(recipe, library, recipe_label=recipe_label))
+    findings.extend(
+        check_materials(recipe, library, recipe_label=recipe_label, parts=resolved_parts)
+    )
 
     if mesh is not None and skeleton is not None:
         findings.extend(check_budgets(recipe, skeleton, mesh, recipe_label=recipe_label))
@@ -253,6 +291,7 @@ def run_gate(
                 recipe=recipe,
                 skeleton_names=set(skeleton.names) if skeleton else None,
                 recipe_label=recipe_label,
+                parts=resolved_parts,
             )
         )
     return findings

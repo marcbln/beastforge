@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://beastforge.dev/schema/parts.list.schema.json",
+  "title": "beastforge part-preset list (parts --json)",
+  "description": "Read-only discovery document for the part-preset library. Presets are sorted by (name, semantic version); params are sorted by name; controls and auto preserve declaration order.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "tool_version", "status", "presets", "warnings"],
+  "properties": {
+    "schema_version": { "const": "1" },
+    "tool_version": { "type": "string" },
+    "status": { "enum": ["ok"] },
+    "presets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/preset" }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/warning" }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?$",
+      "maxLength": 64
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "vec3": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "warning": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "message"],
+      "properties": {
+        "path": { "type": "string" },
+        "message": { "type": "string", "minLength": 1 }
+      }
+    },
+    "param": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type", "default", "description"],
+      "properties": {
+        "name": {
+          "enum": [
+            "radius-start",
+            "radius-end",
+            "rings",
+            "segments",
+            "blend",
+            "taper-start",
+            "taper-end",
+            "twist",
+            "noise-amplitude",
+            "noise-frequency",
+            "noise-seed",
+            "squash-x",
+            "squash-y",
+            "squash-z",
+            "scale-x",
+            "scale-y",
+            "scale-z"
+          ]
+        },
+        "type": { "enum": ["float", "int"] },
+        "default": { "type": "number" },
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "unit": { "enum": ["m", "deg", "ratio", "count"] },
+        "description": { "type": "string", "minLength": 1 }
+      }
+    },
+    "control": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "joint", "axis", "mode", "unbounded", "default", "units"],
+      "properties": {
+        "name": { "$ref": "#/$defs/identifier" },
+        "joint": { "type": "string", "minLength": 1 },
+        "axis": { "$ref": "#/$defs/vec3" },
+        "mode": { "enum": ["rotation", "translation"] },
+        "unbounded": { "type": "boolean" },
+        "range": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["min", "max"],
+          "properties": {
+            "min": { "type": "number" },
+            "max": { "type": "number" }
+          }
+        },
+        "default": { "type": "number" },
+        "units": { "enum": ["deg", "m"] }
+      }
+    },
+    "auto": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "kind", "joint", "amplitude", "period"],
+          "properties": {
+            "name": { "$ref": "#/$defs/identifier" },
+            "kind": { "const": "breathe" },
+            "joint": { "type": "string" },
+            "amplitude": { "type": "number", "exclusiveMinimum": 0 },
+            "period": { "type": "number", "exclusiveMinimum": 0 },
+            "phase": { "type": "number" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "kind", "joint", "axis", "amplitude", "period"],
+          "properties": {
+            "name": { "$ref": "#/$defs/identifier" },
+            "kind": { "const": "bob" },
+            "joint": { "type": "string" },
+            "axis": { "$ref": "#/$defs/vec3" },
+            "amplitude": { "type": "number", "exclusiveMinimum": 0 },
+            "period": { "type": "number", "exclusiveMinimum": 0 },
+            "phase": { "type": "number" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "kind", "joint", "axis", "amplitude", "period"],
+          "properties": {
+            "name": { "$ref": "#/$defs/identifier" },
+            "kind": { "const": "sway" },
+            "joint": { "type": "string" },
+            "axis": { "$ref": "#/$defs/vec3" },
+            "amplitude": { "type": "number", "exclusiveMinimum": 0 },
+            "period": { "type": "number", "exclusiveMinimum": 0 },
+            "phase": { "type": "number" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "kind", "joint", "axis", "rate"],
+          "properties": {
+            "name": { "$ref": "#/$defs/identifier" },
+            "kind": { "const": "rotate" },
+            "joint": { "type": "string" },
+            "axis": { "$ref": "#/$defs/vec3" },
+            "rate": { "type": "number", "not": { "const": 0 } },
+            "phase": { "type": "number" }
+          }
+        }
+      ]
+    },
+    "preset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "family", "version", "description", "path", "sha256", "params", "controls", "auto"],
+      "properties": {
+        "name": { "$ref": "#/$defs/identifier" },
+        "family": { "enum": ["organic", "mechanical", "vehicle"] },
+        "version": { "$ref": "#/$defs/semver" },
+        "description": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "params": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/param" }
+        },
+        "controls": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/control" }
+        },
+        "auto": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/auto" }
+        }
+      }
+    }
+  }
+}

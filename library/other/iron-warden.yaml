@@ -1,0 +1,112 @@
+meta:
+  name: iron-warden
+  description: "A four-legged mechanical warden assembled entirely from part presets."
+  category: other
+  tags: [mechanical, mech, warden]
+  author: beastforge
+  tested_with: "0.1.0"
+  version: "1.0.0"
+
+params: []
+
+budgets: {vertices: 20000, bones: 64, triangles: 60000, max_clip_ticks: 600}
+
+skeleton:
+  root: root
+  bones:
+    - {name: root, parent: null,
+       rest: {translation: [0, 1.05, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: spine, parent: root,
+       rest: {translation: [0, 0.2, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: left-hip, parent: spine,
+       rest: {translation: [0.42, -0.15, -0.1], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: left-knee, parent: left-hip,
+       rest: {translation: [0, -0.5, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: left-ankle, parent: left-knee,
+       rest: {translation: [0, -0.5, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: right-hip, parent: spine,
+       rest: {translation: [-0.42, -0.15, -0.1], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: right-knee, parent: right-hip,
+       rest: {translation: [0, -0.5, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: right-ankle, parent: right-knee,
+       rest: {translation: [0, -0.5, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: back-hip, parent: spine,
+       rest: {translation: [0.42, -0.15, 0.55], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: back-knee, parent: back-hip,
+       rest: {translation: [0, -0.5, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: back-ankle, parent: back-knee,
+       rest: {translation: [0, -0.5, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: far-hip, parent: spine,
+       rest: {translation: [-0.42, -0.15, 0.55], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: far-knee, parent: far-hip,
+       rest: {translation: [0, -0.5, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: far-ankle, parent: far-knee,
+       rest: {translation: [0, -0.5, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: armor-mount, parent: spine,
+       rest: {translation: [0, 0.25, 0.1], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: turret-mount, parent: spine,
+       rest: {translation: [0, 0.5, -0.3], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: piston-mount, parent: spine,
+       rest: {translation: [0, 0.05, 0.45], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+  chains:
+    - {name: left-leg, bones: [left-hip, left-knee, left-ankle]}
+    - {name: right-leg, bones: [right-hip, right-knee, right-ankle]}
+    - {name: back-leg, bones: [back-hip, back-knee, back-ankle]}
+    - {name: far-leg, bones: [far-hip, far-knee, far-ankle]}
+
+surfaces: []
+
+parts:
+  - name: left-leg
+    preset: mech-leg
+    preset_version: "1.0.0"
+    bind: {hip: left-hip, knee: left-knee, ankle: left-ankle}
+    material: chitin
+  - name: right-leg
+    preset: mech-leg
+    preset_version: "1.0.0"
+    bind: {hip: right-hip, knee: right-knee, ankle: right-ankle}
+    material: chitin
+  - name: back-leg
+    preset: mech-leg
+    preset_version: "1.0.0"
+    bind: {hip: back-hip, knee: back-knee, ankle: back-ankle}
+    material: chitin
+  - name: far-leg
+    preset: mech-leg
+    preset_version: "1.0.0"
+    bind: {hip: far-hip, knee: far-knee, ankle: far-ankle}
+    material: chitin
+  - name: chest-plate
+    preset: mech-armor-plate
+    preset_version: "1.0.0"
+    bind: {mount: armor-mount}
+    overrides: {scale-x: 1.4, scale-y: 0.9, scale-z: 1.8}
+    material: chitin
+  - name: shoulder-turret
+    preset: mech-turret
+    preset_version: "1.0.0"
+    bind: {mount: turret-mount}
+    overrides: {scale-y: 0.8}
+    material: chitin
+    auto:
+      - {name: turret-sway, kind: sway, joint: "@mount", axis: [0, 1, 0],
+         amplitude: 5, period: 4.0, phase: 0}
+  - name: rear-piston
+    preset: mech-piston
+    preset_version: "1.0.0"
+    bind: {mount: piston-mount}
+    material: chitin
+
+materials:
+  - {name: chitin, texture: brushed-steel, params: {seed: 3}, size: 256x256,
+     metallic: 0.6, roughness: 0.35}
+
+clips:
+  - {name: patrol, generator: gait, duration: 2.0, loop: true,
+     params: {stride: 0.28, duty: 0.6, bob: 0.02}}
+
+sockets: []
+
+volumes:
+  - {name: hull, role: hit, center: [0, 1.2, 0.1], extents: [0.7, 0.6, 0.9]}

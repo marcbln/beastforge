@@ -12,7 +12,13 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 GeneratorName = Literal[
-    "breathe", "gait", "hover-bob", "recoil", "telegraph-attack", "death-collapse"
+    "breathe",
+    "gait",
+    "hover-bob",
+    "recoil",
+    "telegraph-attack",
+    "death-collapse",
+    "baseline",
 ]
 Scalar = str | int | float | bool | None
 
@@ -64,6 +70,33 @@ class ManifestClip(Strict):
     duration: float
     loop: bool
     generator: GeneratorName
+    source: Literal["authored", "automatic"] = "authored"
+
+
+class ManifestControlRange(Strict):
+    min: float
+    max: float
+
+
+class ManifestControl(Strict):
+    address: str
+    name: str
+    joint: str
+    axis: list[float]
+    mode: Literal["rotation", "translation"]
+    unbounded: bool
+    range: ManifestControlRange | None = None
+    default: float
+    units: Literal["deg", "m"]
+
+
+class ManifestPart(Strict):
+    name: str
+    preset: str
+    presetVersion: str
+    presetSha256: str
+    family: Literal["organic", "mechanical", "vehicle"]
+    controls: list[ManifestControl] = Field(default_factory=list)
 
 
 class ManifestEvent(Strict):
@@ -132,6 +165,7 @@ class Manifest(Strict):
     suggestedScale: float
     skeleton: ManifestSkeleton
     clips: list[ManifestClip]
+    parts: list[ManifestPart] = Field(default_factory=list)
     events: list[ManifestEvent]
     sockets: list[ManifestSocket]
     volumes: list[ManifestVolume]

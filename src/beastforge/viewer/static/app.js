@@ -331,7 +331,7 @@ async function openStage(current) {
   els.stageView.hidden = false;
   els.stageTitle.textContent = entry.name;
   els.stageCategory.textContent = entry.category;
-  renderInspector(els.inspector, { manifest, raw: manifest });
+  renderInspector(els.inspector, { manifest, raw: manifest, onPlayEvent: playEvent });
   renderClipList(manifest, null);
 
   if (state.entry && state.entry.name === entry.name && state.gltf) {
@@ -428,6 +428,27 @@ function activateClip(name, { replace = true, announce = true } = {}) {
   updatePlayPause();
   updateClipButtons(name);
   updateTime(0, state.player.duration);
+}
+
+function playEvent(event) {
+  if (!state.manifest || !state.entry) return;
+  if (!state.player) {
+    toast("The creature is still loading; try again in a moment.", { error: true });
+    return;
+  }
+  const inventory = clipInventory(state.manifest, state.gltf || { animations: [] });
+  const clip = inventory.find((candidate) => candidate.name === event.clip);
+  if (!clip || !clip.available) {
+    toast(`Clip ${event.clip} has no matching animation in the GLB.`, { error: true });
+    return;
+  }
+  activateClip(event.clip, { replace: true, announce: true });
+  if (!state.player || state.player.current !== event.clip) return;
+  const eventTime = Number(event.time);
+  const start = Math.max(0, (Number.isFinite(eventTime) ? eventTime : 0) - 0.35);
+  state.player.seek(start);
+  state.player.resume();
+  updatePlayPause();
 }
 
 function updateClipButtons(active) {

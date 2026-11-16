@@ -7,9 +7,12 @@ permissive for fields whose *semantic* rejection has a stable finding code
 
 from __future__ import annotations
 
-from typing import Annotated, Any, Literal
+from typing import TYPE_CHECKING, Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
+
+if TYPE_CHECKING:
+    from beastforge.model.parts import PartInstance
 
 Vec3 = Annotated[list[float], Field(min_length=3, max_length=3)]
 Quat = Annotated[list[float], Field(min_length=4, max_length=4)]
@@ -201,15 +204,21 @@ class Budgets(StrictModel):
 
 
 class Recipe(StrictModel):
-    """The complete declarative description of one creature."""
+    """The complete declarative description of one creature or prop.
+
+    ``surfaces`` and ``clips`` may be empty: an asset can be assembled entirely
+    from part presets, and an anatomy-neutral asset may have no authored clips.
+    At least one of ``surfaces`` / ``parts`` is required, enforced by the gate.
+    """
 
     meta: Meta
     params: list[Param] = Field(default_factory=list)
     budgets: Budgets = Field(default_factory=Budgets)
     skeleton: Skeleton
-    surfaces: Annotated[list[Surface], Field(min_length=1)]
+    surfaces: list[Surface] = Field(default_factory=list)
+    parts: list[PartInstance] = Field(default_factory=list)
     materials: list[Material] = Field(default_factory=list)
-    clips: Annotated[list[Clip], Field(min_length=1)]
+    clips: list[Clip] = Field(default_factory=list)
     sockets: list[Socket] = Field(default_factory=list)
     volumes: Annotated[list[Volume], Field(min_length=1)]
     phases: list[Phase] = Field(default_factory=list)

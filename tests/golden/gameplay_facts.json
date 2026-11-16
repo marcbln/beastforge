@@ -1,0 +1,1184 @@
+{
+  "ash-crowned-tyrant": {
+    "clips": [
+      {
+        "duration": 2.0,
+        "generator": "breathe",
+        "loop": true,
+        "name": "idle"
+      },
+      {
+        "duration": 1.2,
+        "generator": "gait",
+        "loop": true,
+        "name": "locomotion"
+      },
+      {
+        "duration": 1.0,
+        "generator": "telegraph-attack",
+        "loop": false,
+        "name": "attack"
+      },
+      {
+        "duration": 0.5,
+        "generator": "recoil",
+        "loop": false,
+        "name": "hurt"
+      },
+      {
+        "duration": 1.5,
+        "generator": "death-collapse",
+        "loop": false,
+        "name": "death"
+      }
+    ],
+    "events": [
+      {
+        "clip": "attack",
+        "name": "impact",
+        "time": 0.6
+      }
+    ],
+    "forwardAxis": "-Z",
+    "joints": [
+      {
+        "name": "root",
+        "parent": null
+      },
+      {
+        "name": "spine-01",
+        "parent": "root"
+      },
+      {
+        "name": "spine-02",
+        "parent": "spine-01"
+      },
+      {
+        "name": "spine-03",
+        "parent": "spine-02"
+      },
+      {
+        "name": "neck",
+        "parent": "spine-03"
+      },
+      {
+        "name": "head",
+        "parent": "neck"
+      },
+      {
+        "name": "jaw",
+        "parent": "head"
+      },
+      {
+        "name": "crown",
+        "parent": "head"
+      },
+      {
+        "name": "shoulder-l",
+        "parent": "spine-02"
+      },
+      {
+        "name": "upper-arm-l",
+        "parent": "shoulder-l"
+      },
+      {
+        "name": "lower-arm-l",
+        "parent": "upper-arm-l"
+      },
+      {
+        "name": "hand-l",
+        "parent": "lower-arm-l"
+      },
+      {
+        "name": "shoulder-r",
+        "parent": "spine-02"
+      },
+      {
+        "name": "upper-arm-r",
+        "parent": "shoulder-r"
+      },
+      {
+        "name": "lower-arm-r",
+        "parent": "upper-arm-r"
+      },
+      {
+        "name": "hand-r",
+        "parent": "lower-arm-r"
+      },
+      {
+        "name": "hip-l",
+        "parent": "root"
+      },
+      {
+        "name": "thigh-l",
+        "parent": "hip-l"
+      },
+      {
+        "name": "shin-l",
+        "parent": "thigh-l"
+      },
+      {
+        "name": "foot-l",
+        "parent": "shin-l"
+      },
+      {
+        "name": "hip-r",
+        "parent": "root"
+      },
+      {
+        "name": "thigh-r",
+        "parent": "hip-r"
+      },
+      {
+        "name": "shin-r",
+        "parent": "thigh-r"
+      },
+      {
+        "name": "foot-r",
+        "parent": "shin-r"
+      },
+      {
+        "name": "tail-01",
+        "parent": "spine-03"
+      },
+      {
+        "name": "tail-02",
+        "parent": "tail-01"
+      },
+      {
+        "name": "tail-03",
+        "parent": "tail-02"
+      },
+      {
+        "name": "tail-04",
+        "parent": "tail-03"
+      }
+    ],
+    "materials": [
+      {
+        "metallic": 0.0,
+        "name": "hide",
+        "params": {
+          "scale": 8,
+          "seed": 12
+        },
+        "roughness": 0.9,
+        "size": "256x256",
+        "slot": "baseColor",
+        "texture": "granite"
+      },
+      {
+        "metallic": 0.4,
+        "name": "chitin",
+        "params": {
+          "grain": 14,
+          "seed": 3
+        },
+        "roughness": 0.35,
+        "size": "256x256",
+        "slot": "baseColor",
+        "texture": "brushed-steel"
+      }
+    ],
+    "phases": [
+      {
+        "name": "enraged",
+        "threshold": 0.66
+      },
+      {
+        "name": "desperate",
+        "threshold": 0.33
+      }
+    ],
+    "sockets": [
+      {
+        "name": "maw",
+        "offset": [
+          0.0,
+          -0.08,
+          -0.35
+        ],
+        "target": "head"
+      },
+      {
+        "name": "core",
+        "offset": [
+          0.0,
+          0.1,
+          -0.2
+        ],
+        "target": "spine-02"
+      }
+    ],
+    "units": "m",
+    "upAxis": "Y",
+    "volumes": [
+      {
+        "bone": null,
+        "center": [
+          0.0,
+          1.55,
+          0.25
+        ],
+        "extents": [
+          0.55,
+          0.65,
+          0.65
+        ],
+        "name": "body-hull",
+        "role": "hit"
+      },
+      {
+        "bone": "head",
+        "center": [
+          0.0,
+          1.95,
+          -0.55
+        ],
+        "extents": [
+          0.24,
+          0.24,
+          0.3
+        ],
+        "name": "skull-weak",
+        "role": "weak-point"
+      }
+    ]
+  },
+  "chitter-mite": {
+    "clips": [
+      {
+        "duration": 1.5,
+        "generator": "breathe",
+        "loop": true,
+        "name": "idle"
+      },
+      {
+        "duration": 1.0,
+        "generator": "hover-bob",
+        "loop": true,
+        "name": "locomotion"
+      },
+      {
+        "duration": 0.5,
+        "generator": "telegraph-attack",
+        "loop": false,
+        "name": "attack"
+      },
+      {
+        "duration": 0.4,
+        "generator": "recoil",
+        "loop": false,
+        "name": "hurt"
+      },
+      {
+        "duration": 1.0,
+        "generator": "death-collapse",
+        "loop": false,
+        "name": "death"
+      }
+    ],
+    "events": [
+      {
+        "clip": "attack",
+        "name": "impact",
+        "time": 0.3333333333333333
+      }
+    ],
+    "forwardAxis": "-Z",
+    "joints": [
+      {
+        "name": "root",
+        "parent": null
+      },
+      {
+        "name": "body",
+        "parent": "root"
+      },
+      {
+        "name": "head",
+        "parent": "body"
+      },
+      {
+        "name": "mandible-l",
+        "parent": "head"
+      },
+      {
+        "name": "mandible-r",
+        "parent": "head"
+      },
+      {
+        "name": "leg-l1",
+        "parent": "body"
+      },
+      {
+        "name": "leg-l1-tip",
+        "parent": "leg-l1"
+      },
+      {
+        "name": "leg-l2",
+        "parent": "body"
+      },
+      {
+        "name": "leg-l2-tip",
+        "parent": "leg-l2"
+      },
+      {
+        "name": "leg-l3",
+        "parent": "body"
+      },
+      {
+        "name": "leg-l3-tip",
+        "parent": "leg-l3"
+      },
+      {
+        "name": "leg-r1",
+        "parent": "body"
+      },
+      {
+        "name": "leg-r1-tip",
+        "parent": "leg-r1"
+      },
+      {
+        "name": "leg-r2",
+        "parent": "body"
+      },
+      {
+        "name": "leg-r2-tip",
+        "parent": "leg-r2"
+      },
+      {
+        "name": "leg-r3",
+        "parent": "body"
+      },
+      {
+        "name": "leg-r3-tip",
+        "parent": "leg-r3"
+      }
+    ],
+    "materials": [
+      {
+        "metallic": 0.0,
+        "name": "hide",
+        "params": {
+          "scale": 12,
+          "seed": 21
+        },
+        "roughness": 0.8,
+        "size": "256x256",
+        "slot": "baseColor",
+        "texture": "granite"
+      },
+      {
+        "metallic": 0.5,
+        "name": "chitin",
+        "params": {
+          "grain": 20,
+          "seed": 5
+        },
+        "roughness": 0.3,
+        "size": "256x256",
+        "slot": "baseColor",
+        "texture": "brushed-steel"
+      }
+    ],
+    "phases": [],
+    "sockets": [
+      {
+        "name": "eye",
+        "offset": [
+          0.0,
+          0.02,
+          -0.12
+        ],
+        "target": "head"
+      }
+    ],
+    "units": "m",
+    "upAxis": "Y",
+    "volumes": [
+      {
+        "bone": null,
+        "center": [
+          0.0,
+          0.4,
+          0.0
+        ],
+        "extents": [
+          0.2,
+          0.16,
+          0.22
+        ],
+        "name": "body-hull",
+        "role": "hit"
+      },
+      {
+        "bone": "head",
+        "center": [
+          0.0,
+          0.36,
+          -0.28
+        ],
+        "extents": [
+          0.1,
+          0.08,
+          0.1
+        ],
+        "name": "mandible-weak",
+        "role": "weak-point"
+      }
+    ]
+  },
+  "elephant": {
+    "clips": [
+      {
+        "duration": 2.2,
+        "generator": "breathe",
+        "loop": true,
+        "name": "idle"
+      },
+      {
+        "duration": 1.6,
+        "generator": "gait",
+        "loop": true,
+        "name": "locomotion"
+      },
+      {
+        "duration": 1.1666666666666667,
+        "generator": "telegraph-attack",
+        "loop": false,
+        "name": "attack"
+      },
+      {
+        "duration": 0.6,
+        "generator": "recoil",
+        "loop": false,
+        "name": "hurt"
+      },
+      {
+        "duration": 1.8,
+        "generator": "death-collapse",
+        "loop": false,
+        "name": "death"
+      }
+    ],
+    "events": [
+      {
+        "clip": "attack",
+        "name": "impact",
+        "time": 0.7
+      }
+    ],
+    "forwardAxis": "-Z",
+    "joints": [
+      {
+        "name": "root",
+        "parent": null
+      },
+      {
+        "name": "spine-01",
+        "parent": "root"
+      },
+      {
+        "name": "spine-02",
+        "parent": "spine-01"
+      },
+      {
+        "name": "spine-03",
+        "parent": "spine-02"
+      },
+      {
+        "name": "neck",
+        "parent": "spine-01"
+      },
+      {
+        "name": "head",
+        "parent": "neck"
+      },
+      {
+        "name": "trunk-01",
+        "parent": "head"
+      },
+      {
+        "name": "trunk-02",
+        "parent": "trunk-01"
+      },
+      {
+        "name": "trunk-03",
+        "parent": "trunk-02"
+      },
+      {
+        "name": "trunk-04",
+        "parent": "trunk-03"
+      },
+      {
+        "name": "trunk-tip",
+        "parent": "trunk-04"
+      },
+      {
+        "name": "tusk-l-01",
+        "parent": "head"
+      },
+      {
+        "name": "tusk-l-02",
+        "parent": "tusk-l-01"
+      },
+      {
+        "name": "tusk-r-01",
+        "parent": "head"
+      },
+      {
+        "name": "tusk-r-02",
+        "parent": "tusk-r-01"
+      },
+      {
+        "name": "ear-l",
+        "parent": "head"
+      },
+      {
+        "name": "ear-r",
+        "parent": "head"
+      },
+      {
+        "name": "tail-01",
+        "parent": "spine-03"
+      },
+      {
+        "name": "tail-02",
+        "parent": "tail-01"
+      },
+      {
+        "name": "tail-tuft",
+        "parent": "tail-02"
+      },
+      {
+        "name": "shoulder-fl",
+        "parent": "spine-01"
+      },
+      {
+        "name": "upper-fl",
+        "parent": "shoulder-fl"
+      },
+      {
+        "name": "lower-fl",
+        "parent": "upper-fl"
+      },
+      {
+        "name": "foot-fl",
+        "parent": "lower-fl"
+      },
+      {
+        "name": "shoulder-fr",
+        "parent": "spine-01"
+      },
+      {
+        "name": "upper-fr",
+        "parent": "shoulder-fr"
+      },
+      {
+        "name": "lower-fr",
+        "parent": "upper-fr"
+      },
+      {
+        "name": "foot-fr",
+        "parent": "lower-fr"
+      },
+      {
+        "name": "hip-rl",
+        "parent": "spine-03"
+      },
+      {
+        "name": "upper-rl",
+        "parent": "hip-rl"
+      },
+      {
+        "name": "lower-rl",
+        "parent": "upper-rl"
+      },
+      {
+        "name": "foot-rl",
+        "parent": "lower-rl"
+      },
+      {
+        "name": "hip-rr",
+        "parent": "spine-03"
+      },
+      {
+        "name": "upper-rr",
+        "parent": "hip-rr"
+      },
+      {
+        "name": "lower-rr",
+        "parent": "upper-rr"
+      },
+      {
+        "name": "foot-rr",
+        "parent": "lower-rr"
+      }
+    ],
+    "materials": [
+      {
+        "metallic": 0.0,
+        "name": "hide",
+        "params": {
+          "cells": 8,
+          "crack-color": "#2f2e2b",
+          "mud-dark": "#4a4844",
+          "mud-light": "#6a6862",
+          "seed": 91
+        },
+        "roughness": 0.9,
+        "size": "512x512",
+        "slot": "baseColor",
+        "texture": "cracked-earth"
+      },
+      {
+        "metallic": 0.0,
+        "name": "tusk",
+        "params": {
+          "body-color": "#e6dcc2",
+          "seed": 15,
+          "vein-color": "#cdbb90",
+          "vein-scale": 3
+        },
+        "roughness": 0.35,
+        "size": "256x256",
+        "slot": "baseColor",
+        "texture": "marble-veined"
+      },
+      {
+        "metallic": 0.0,
+        "name": "nail",
+        "params": {
+          "body-color": "#3a3835",
+          "seed": 52,
+          "vein-color": "#252422",
+          "vein-scale": 6
+        },
+        "roughness": 0.55,
+        "size": "256x256",
+        "slot": "baseColor",
+        "texture": "marble-veined"
+      },
+      {
+        "metallic": 0.0,
+        "name": "hair",
+        "params": {
+          "seed": 61,
+          "strands": 48
+        },
+        "roughness": 0.9,
+        "size": "256x256",
+        "slot": "baseColor",
+        "texture": "hair"
+      }
+    ],
+    "phases": [],
+    "sockets": [
+      {
+        "name": "trunk-tip",
+        "offset": [
+          0.0,
+          -0.05,
+          0.0
+        ],
+        "target": "trunk-tip"
+      }
+    ],
+    "units": "m",
+    "upAxis": "Y",
+    "volumes": [
+      {
+        "bone": null,
+        "center": [
+          0.0,
+          1.62,
+          0.7
+        ],
+        "extents": [
+          0.6,
+          0.55,
+          1.05
+        ],
+        "name": "body-hull",
+        "role": "hit"
+      },
+      {
+        "bone": "head",
+        "center": [
+          0.0,
+          1.85,
+          -0.55
+        ],
+        "extents": [
+          0.3,
+          0.3,
+          0.35
+        ],
+        "name": "head-weak",
+        "role": "weak-point"
+      }
+    ]
+  },
+  "giraffe": {
+    "clips": [
+      {
+        "duration": 2.0,
+        "generator": "breathe",
+        "loop": true,
+        "name": "idle"
+      },
+      {
+        "duration": 1.4,
+        "generator": "gait",
+        "loop": true,
+        "name": "locomotion"
+      },
+      {
+        "duration": 1.0,
+        "generator": "telegraph-attack",
+        "loop": false,
+        "name": "attack"
+      },
+      {
+        "duration": 0.5,
+        "generator": "recoil",
+        "loop": false,
+        "name": "hurt"
+      },
+      {
+        "duration": 1.5,
+        "generator": "death-collapse",
+        "loop": false,
+        "name": "death"
+      }
+    ],
+    "events": [
+      {
+        "clip": "attack",
+        "name": "impact",
+        "time": 0.6666666666666666
+      }
+    ],
+    "forwardAxis": "-Z",
+    "joints": [
+      {
+        "name": "root",
+        "parent": null
+      },
+      {
+        "name": "spine-01",
+        "parent": "root"
+      },
+      {
+        "name": "spine-02",
+        "parent": "spine-01"
+      },
+      {
+        "name": "spine-03",
+        "parent": "spine-02"
+      },
+      {
+        "name": "neck-01",
+        "parent": "spine-01"
+      },
+      {
+        "name": "neck-02",
+        "parent": "neck-01"
+      },
+      {
+        "name": "neck-03",
+        "parent": "neck-02"
+      },
+      {
+        "name": "head",
+        "parent": "neck-03"
+      },
+      {
+        "name": "muzzle",
+        "parent": "head"
+      },
+      {
+        "name": "ossicone-l",
+        "parent": "head"
+      },
+      {
+        "name": "ossicone-r",
+        "parent": "head"
+      },
+      {
+        "name": "tail-01",
+        "parent": "spine-03"
+      },
+      {
+        "name": "tail-02",
+        "parent": "tail-01"
+      },
+      {
+        "name": "tail-tuft",
+        "parent": "tail-02"
+      },
+      {
+        "name": "shoulder-fl",
+        "parent": "spine-01"
+      },
+      {
+        "name": "upper-fl",
+        "parent": "shoulder-fl"
+      },
+      {
+        "name": "lower-fl",
+        "parent": "upper-fl"
+      },
+      {
+        "name": "foot-fl",
+        "parent": "lower-fl"
+      },
+      {
+        "name": "shoulder-fr",
+        "parent": "spine-01"
+      },
+      {
+        "name": "upper-fr",
+        "parent": "shoulder-fr"
+      },
+      {
+        "name": "lower-fr",
+        "parent": "upper-fr"
+      },
+      {
+        "name": "foot-fr",
+        "parent": "lower-fr"
+      },
+      {
+        "name": "hip-rl",
+        "parent": "spine-03"
+      },
+      {
+        "name": "upper-rl",
+        "parent": "hip-rl"
+      },
+      {
+        "name": "lower-rl",
+        "parent": "upper-rl"
+      },
+      {
+        "name": "foot-rl",
+        "parent": "lower-rl"
+      },
+      {
+        "name": "hip-rr",
+        "parent": "spine-03"
+      },
+      {
+        "name": "upper-rr",
+        "parent": "hip-rr"
+      },
+      {
+        "name": "lower-rr",
+        "parent": "upper-rr"
+      },
+      {
+        "name": "foot-rr",
+        "parent": "lower-rr"
+      }
+    ],
+    "materials": [
+      {
+        "metallic": 0.0,
+        "name": "hide",
+        "params": {
+          "patch-density": 5,
+          "seed": 20624
+        },
+        "roughness": 0.85,
+        "size": "512x512",
+        "slot": "baseColor",
+        "texture": "giraffe"
+      },
+      {
+        "metallic": 0.0,
+        "name": "hair",
+        "params": {
+          "seed": 77,
+          "strands": 64
+        },
+        "roughness": 0.9,
+        "size": "256x256",
+        "slot": "baseColor",
+        "texture": "hair"
+      },
+      {
+        "metallic": 0.0,
+        "name": "hoof",
+        "params": {
+          "body-color": "#3a332c",
+          "seed": 44,
+          "vein-color": "#221e1a",
+          "vein-scale": 6
+        },
+        "roughness": 0.55,
+        "size": "256x256",
+        "slot": "baseColor",
+        "texture": "marble-veined"
+      }
+    ],
+    "phases": [],
+    "sockets": [
+      {
+        "name": "muzzle",
+        "offset": [
+          0.0,
+          0.0,
+          -0.08
+        ],
+        "target": "muzzle"
+      }
+    ],
+    "units": "m",
+    "upAxis": "Y",
+    "volumes": [
+      {
+        "bone": null,
+        "center": [
+          0.0,
+          2.55,
+          0.55
+        ],
+        "extents": [
+          0.42,
+          0.5,
+          1.0
+        ],
+        "name": "body-hull",
+        "role": "hit"
+      },
+      {
+        "bone": "head",
+        "center": [
+          0.0,
+          4.35,
+          -0.8
+        ],
+        "extents": [
+          0.18,
+          0.18,
+          0.22
+        ],
+        "name": "head-weak",
+        "role": "weak-point"
+      }
+    ]
+  },
+  "ridge-stalker": {
+    "clips": [
+      {
+        "duration": 2.0,
+        "generator": "breathe",
+        "loop": true,
+        "name": "idle"
+      },
+      {
+        "duration": 1.0,
+        "generator": "gait",
+        "loop": true,
+        "name": "locomotion"
+      },
+      {
+        "duration": 0.8333333333333334,
+        "generator": "telegraph-attack",
+        "loop": false,
+        "name": "attack"
+      },
+      {
+        "duration": 0.5,
+        "generator": "recoil",
+        "loop": false,
+        "name": "hurt"
+      },
+      {
+        "duration": 1.5,
+        "generator": "death-collapse",
+        "loop": false,
+        "name": "death"
+      }
+    ],
+    "events": [
+      {
+        "clip": "attack",
+        "name": "impact",
+        "time": 0.6333333333333333
+      }
+    ],
+    "forwardAxis": "-Z",
+    "joints": [
+      {
+        "name": "root",
+        "parent": null
+      },
+      {
+        "name": "spine-01",
+        "parent": "root"
+      },
+      {
+        "name": "spine-02",
+        "parent": "spine-01"
+      },
+      {
+        "name": "spine-03",
+        "parent": "spine-02"
+      },
+      {
+        "name": "neck",
+        "parent": "spine-01"
+      },
+      {
+        "name": "head",
+        "parent": "neck"
+      },
+      {
+        "name": "tail-01",
+        "parent": "spine-03"
+      },
+      {
+        "name": "tail-02",
+        "parent": "tail-01"
+      },
+      {
+        "name": "shoulder-fl",
+        "parent": "spine-01"
+      },
+      {
+        "name": "upper-fl",
+        "parent": "shoulder-fl"
+      },
+      {
+        "name": "lower-fl",
+        "parent": "upper-fl"
+      },
+      {
+        "name": "foot-fl",
+        "parent": "lower-fl"
+      },
+      {
+        "name": "shoulder-fr",
+        "parent": "spine-01"
+      },
+      {
+        "name": "upper-fr",
+        "parent": "shoulder-fr"
+      },
+      {
+        "name": "lower-fr",
+        "parent": "upper-fr"
+      },
+      {
+        "name": "foot-fr",
+        "parent": "lower-fr"
+      },
+      {
+        "name": "hip-rl",
+        "parent": "spine-03"
+      },
+      {
+        "name": "upper-rl",
+        "parent": "hip-rl"
+      },
+      {
+        "name": "lower-rl",
+        "parent": "upper-rl"
+      },
+      {
+        "name": "foot-rl",
+        "parent": "lower-rl"
+      },
+      {
+        "name": "hip-rr",
+        "parent": "spine-03"
+      },
+      {
+        "name": "upper-rr",
+        "parent": "hip-rr"
+      },
+      {
+        "name": "lower-rr",
+        "parent": "upper-rr"
+      },
+      {
+        "name": "foot-rr",
+        "parent": "lower-rr"
+      }
+    ],
+    "materials": [
+      {
+        "metallic": 0.0,
+        "name": "hide",
+        "params": {
+          "scale": 9,
+          "seed": 12
+        },
+        "roughness": 0.85,
+        "size": "256x256",
+        "slot": "baseColor",
+        "texture": "granite"
+      },
+      {
+        "metallic": 0.3,
+        "name": "chitin",
+        "params": {
+          "seed": 3
+        },
+        "roughness": 0.4,
+        "size": "256x256",
+        "slot": "baseColor",
+        "texture": "brushed-steel"
+      }
+    ],
+    "phases": [],
+    "sockets": [
+      {
+        "name": "maw",
+        "offset": [
+          0.0,
+          -0.05,
+          -0.4
+        ],
+        "target": "head"
+      }
+    ],
+    "units": "m",
+    "upAxis": "Y",
+    "volumes": [
+      {
+        "bone": null,
+        "center": [
+          0.0,
+          0.9,
+          0.2
+        ],
+        "extents": [
+          0.45,
+          0.4,
+          0.9
+        ],
+        "name": "body-hull",
+        "role": "hit"
+      },
+      {
+        "bone": "head",
+        "center": [
+          0.0,
+          1.1,
+          -0.45
+        ],
+        "extents": [
+          0.18,
+          0.18,
+          0.22
+        ],
+        "name": "skull-weak",
+        "role": "weak-point"
+      }
+    ]
+  }
+}

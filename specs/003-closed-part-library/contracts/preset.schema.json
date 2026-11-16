@@ -1,0 +1,260 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://beastforge.dev/schema/part-preset.schema.json",
+  "title": "beastforge part preset",
+  "description": "One immutable part-preset version at library/parts/<name>/<MAJOR.MINOR.PATCH>.yaml. The file name, parent directory, name, and version must agree. Preset surfaces use @slot bone roles resolved by a part instance's bind map.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "family", "version", "description", "surface"],
+  "properties": {
+    "name": { "$ref": "#/$defs/identifier" },
+    "family": { "enum": ["organic", "mechanical", "vehicle"] },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Exact preset version; immutable once published."
+    },
+    "description": { "type": "string", "minLength": 1 },
+    "surface": { "$ref": "#/$defs/presetSurface" },
+    "params": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/presetParam" }
+    },
+    "controls": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/control" }
+    },
+    "auto": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/autoBehaviour" }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?$",
+      "maxLength": 64
+    },
+    "slot": {
+      "type": "string",
+      "pattern": "^@[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?$",
+      "description": "An abstract bone role bound by the consuming part instance."
+    },
+    "vec3": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "radius": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["start", "end"],
+          "properties": {
+            "start": { "type": "number", "exclusiveMinimum": 0 },
+            "end": { "type": "number", "exclusiveMinimum": 0 }
+          }
+        },
+        {
+          "type": "array",
+          "items": { "type": "number", "exclusiveMinimum": 0 },
+          "minItems": 1
+        }
+      ]
+    },
+    "modifiers": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "taper": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["start", "end"],
+          "properties": {
+            "start": { "type": "number" },
+            "end": { "type": "number" }
+          }
+        },
+        "twist": { "type": "number" },
+        "radial_noise": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "amplitude": { "type": "number", "minimum": 0 },
+            "frequency": { "type": "number", "exclusiveMinimum": 0 },
+            "seed": { "type": "integer" }
+          }
+        },
+        "squash": { "$ref": "#/$defs/vec3" },
+        "scale": { "$ref": "#/$defs/vec3" }
+      }
+    },
+    "presetSurface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "kind", "bones", "rings", "segments", "radius"],
+      "properties": {
+        "mode": { "const": "sweep" },
+        "kind": { "enum": ["swept-solid", "shell", "rigid-part"] },
+        "bones": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/slot" },
+          "minItems": 1
+        },
+        "rigid_bone": { "$ref": "#/$defs/slot" },
+        "rings": { "type": "integer", "minimum": 2 },
+        "segments": { "type": "integer", "minimum": 3 },
+        "radius": { "$ref": "#/$defs/radius" },
+        "blend": { "type": "number", "exclusiveMinimum": 0, "maximum": 0.35 },
+        "modifiers": { "$ref": "#/$defs/modifiers" },
+        "material": { "$ref": "#/$defs/identifier" }
+      }
+    },
+    "overrideKey": {
+      "enum": [
+        "radius-start",
+        "radius-end",
+        "rings",
+        "segments",
+        "blend",
+        "taper-start",
+        "taper-end",
+        "twist",
+        "noise-amplitude",
+        "noise-frequency",
+        "noise-seed",
+        "squash-x",
+        "squash-y",
+        "squash-z",
+        "scale-x",
+        "scale-y",
+        "scale-z"
+      ]
+    },
+    "presetParam": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type", "description"],
+      "properties": {
+        "name": { "$ref": "#/$defs/overrideKey" },
+        "type": { "enum": ["float", "int"] },
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "unit": { "enum": ["m", "deg", "ratio", "count"] },
+        "description": { "type": "string", "minLength": 1 }
+      }
+    },
+    "controlRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min", "max"],
+      "properties": {
+        "min": { "type": "number" },
+        "max": { "type": "number" }
+      }
+    },
+    "control": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "joint", "axis", "mode", "default", "units"],
+      "properties": {
+        "name": { "$ref": "#/$defs/identifier" },
+        "joint": {
+          "type": "string",
+          "pattern": "^(@[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?|[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?)$",
+          "description": "@slot in a preset; a concrete bone in an instance."
+        },
+        "axis": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 3,
+          "maxItems": 3,
+          "description": "Unit vector within 1e-6."
+        },
+        "mode": { "enum": ["rotation", "translation"] },
+        "range": { "$ref": "#/$defs/controlRange" },
+        "unbounded": { "type": "boolean" },
+        "default": { "type": "number" },
+        "units": { "enum": ["deg", "m"] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "mode": { "const": "rotation" } }, "required": ["mode"] },
+          "then": { "properties": { "units": { "const": "deg" } } }
+        },
+        {
+          "if": { "properties": { "mode": { "const": "translation" } }, "required": ["mode"] },
+          "then": { "properties": { "units": { "const": "m" } } }
+        },
+        {
+          "if": { "properties": { "unbounded": { "const": false } }, "required": ["unbounded"] },
+          "then": { "required": ["range"] }
+        },
+        {
+          "if": { "properties": { "unbounded": { "const": true } }, "required": ["unbounded"] },
+          "then": { "not": { "required": ["range"] } }
+        }
+      ]
+    },
+    "autoBehaviour": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "name", "joint", "amplitude", "period"],
+          "properties": {
+            "kind": { "const": "breathe" },
+            "name": { "$ref": "#/$defs/identifier" },
+            "joint": { "type": "string" },
+            "amplitude": { "type": "number", "exclusiveMinimum": 0 },
+            "period": { "type": "number", "exclusiveMinimum": 0 },
+            "phase": { "type": "number" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "name", "joint", "axis", "amplitude", "period"],
+          "properties": {
+            "kind": { "const": "bob" },
+            "name": { "$ref": "#/$defs/identifier" },
+            "joint": { "type": "string" },
+            "axis": { "$ref": "#/$defs/vec3" },
+            "amplitude": { "type": "number", "exclusiveMinimum": 0 },
+            "period": { "type": "number", "exclusiveMinimum": 0 },
+            "phase": { "type": "number" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "name", "joint", "axis", "amplitude", "period"],
+          "properties": {
+            "kind": { "const": "sway" },
+            "name": { "$ref": "#/$defs/identifier" },
+            "joint": { "type": "string" },
+            "axis": { "$ref": "#/$defs/vec3" },
+            "amplitude": { "type": "number", "exclusiveMinimum": 0 },
+            "period": { "type": "number", "exclusiveMinimum": 0 },
+            "phase": { "type": "number" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "name", "joint", "axis", "rate"],
+          "properties": {
+            "kind": { "const": "rotate" },
+            "name": { "$ref": "#/$defs/identifier" },
+            "joint": { "type": "string" },
+            "axis": { "$ref": "#/$defs/vec3" },
+            "rate": { "type": "number", "not": { "const": 0 } },
+            "phase": { "type": "number" }
+          }
+        }
+      ]
+    }
+  }
+}

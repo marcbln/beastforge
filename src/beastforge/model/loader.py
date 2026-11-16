@@ -16,6 +16,7 @@ from pydantic import ValidationError
 
 from beastforge.model.errors import BeastforgeError
 from beastforge.model.findings import ValidationFinding
+from beastforge.model.parts import PartInstance  # noqa: F401 - registers Recipe.parts
 from beastforge.model.recipe import Recipe
 
 _EXECUTABLE_KEYS = frozenset({"eval", "exec", "import", "__reduce__"})

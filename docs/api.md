@@ -51,6 +51,16 @@ Emits `{schema_version, tool_version, status, recipe, name, params[]}`. Each
 param has `name`, `type`, `default`, `description`, and optional `min`, `max`,
 `values`, `unit`.
 
+### `parts [NAME] --json`
+
+Emits the read-only preset list
+`{schema_version, tool_version, status, presets[], warnings[]}`. Each preset has
+`name`, `family`, `version`, `description`, `path`, `sha256`, `params[]`,
+`controls[]`, and `auto[]`. Presets are sorted by `(name, semantic version)`;
+params are sorted by name; controls and auto preserve declaration order. Unknown
+names exit `4`, invalid `--family`/`--version` exit `2`, and a malformed preset
+file exits `3`. See `specs/003-closed-part-library/contracts/parts.list.schema.json`.
+
 ### `render RECIPE --json`
 
 Emits the generation report:
@@ -173,7 +183,9 @@ The sidecar `<name>.manifest.json` is the gameplay contract. Its
 2. **Events are authoritative.** Read `events[]` for impact, fire, footstep,
    and death timing. Baked keyframes are never inspected for gameplay timing.
 3. **Reserved names are public.** `idle`, `locomotion`, `attack`, `hurt`, and
-   `death` are required. Renaming or removing one is a major schema change.
+   `death` are required for non-`other` assets that author clips. A
+   `category: other` asset, or an asset with no authored clips, may publish any
+   clip set or none.
 4. **Playback scaling.** `playback.eventTimeScaling` is `"proportional"` and
    `playback.warning` is non-empty: changing playback rate scales every event
    time by the same factor.
@@ -182,6 +194,22 @@ The sidecar `<name>.manifest.json` is the gameplay contract. Its
 6. **Hooks.** Sockets target a joint plus a bone-local offset. Volumes are box
    proxies with a role (`hit`, `weak-point`, `collision`) and optional follow
    bone. Boss phases are health fractions.
+
+### Manifest 1.1 additions
+
+`schemaVersion` is `"1.1"`. All additions are optional for a 1.0 reader:
+
+- `clips[].source`: `"authored"` (default when absent) or `"automatic"`.
+- `clips[].generator`: may be `"baseline"`, the synthesized automatic clip.
+- `parts[]`: `{name, preset, presetVersion, presetSha256, family, controls[]}`.
+- `parts[].controls[]`: `{address, name, joint, axis, mode, unbounded, range?,
+  default, units}`. `address` is `"<part>/<control>"`, `joint` must exist in
+  `skeleton.joints`, `units` is `deg` for rotation and `m` for translation, and
+  `range` is omitted when `unbounded` is true.
+
+Closure is a generation gate, not a runtime fact: the absence of a
+`surface-open`, `surface-non-manifold`, `surface-winding-invalid`, or
+`surface-degenerate` finding is the published promise that every part is closed.
 
 A consumer that ignores the manifest still gets a working animated creature;
 it simply loses the semantic gameplay data.

@@ -39,3 +39,4 @@ spec. Link related ADRs and backlog notes instead of copying them.
 |------|-------|--------|
 | [001](001-procedural-creature-generator/spec.md) | Procedural 3D Creature Generator | Implemented |
 | [002](002-webgl-library-viewer/spec.md) | WebGL Library Viewer | Implemented |
+| [003](003-closed-part-library/spec.md) | Closed Part Library | Implemented |

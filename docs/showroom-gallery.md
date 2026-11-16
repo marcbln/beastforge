@@ -115,3 +115,35 @@ Recipe: [`library/swarm/chitter-mite.yaml`](../library/swarm/chitter-mite.yaml)
 | Front, extreme bend (90°) |
 |:---:|
 | ![Front view with the test joint bent 90 degrees](../showroom/reference/chitter-mite/frames/front__extreme-bend.png) |
+
+## iron-warden
+
+Recipe: [`library/other/iron-warden.yaml`](../library/other/iron-warden.yaml)
+
+**Turntable, rest pose**
+
+| Front | Three-quarter | Side | Rear |
+|:---:|:---:|:---:|:---:|
+| ![Front view, rest pose](../showroom/reference/iron-warden/frames/front__rest.png) | ![Three-quarter view, rest pose](../showroom/reference/iron-warden/frames/three-quarter__rest.png) | ![Side view, rest pose](../showroom/reference/iron-warden/frames/side__rest.png) | ![Rear view, rest pose](../showroom/reference/iron-warden/frames/rear__rest.png) |
+
+**Deformation check**
+
+| Front, extreme bend (90°) |
+|:---:|
+| ![Front view with the test joint bent 90 degrees](../showroom/reference/iron-warden/frames/front__extreme-bend.png) |
+
+## hover-skiff
+
+Recipe: [`library/other/hover-skiff.yaml`](../library/other/hover-skiff.yaml)
+
+**Turntable, rest pose**
+
+| Front | Three-quarter | Side | Rear |
+|:---:|:---:|:---:|:---:|
+| ![Front view, rest pose](../showroom/reference/hover-skiff/frames/front__rest.png) | ![Three-quarter view, rest pose](../showroom/reference/hover-skiff/frames/three-quarter__rest.png) | ![Side view, rest pose](../showroom/reference/hover-skiff/frames/side__rest.png) | ![Rear view, rest pose](../showroom/reference/hover-skiff/frames/rear__rest.png) |
+
+**Deformation check**
+
+| Front, extreme bend (90°) |
+|:---:|
+| ![Front view with the test joint bent 90 degrees](../showroom/reference/hover-skiff/frames/front__extreme-bend.png) |

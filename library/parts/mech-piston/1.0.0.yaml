@@ -1,0 +1,23 @@
+name: mech-piston
+family: mechanical
+version: "1.0.0"
+description: "Closed rigid piston with a translational extend control."
+surface:
+  mode: sweep
+  kind: rigid-part
+  bones: ["@mount"]
+  rigid_bone: "@mount"
+  rings: 5
+  segments: 6
+  radius: {start: 0.08, end: 0.08}
+  material: chitin
+params:
+  - {name: rings, type: int, min: 2, max: 14, unit: count,
+     description: "Rings along the piston."}
+  - {name: segments, type: int, min: 3, max: 16, unit: count,
+     description: "Radial segments per ring."}
+  - {name: scale-y, type: float, min: 0.1, max: 6.0, unit: ratio,
+     description: "Y scale multiplier."}
+controls:
+  - {name: extend, joint: "@mount", axis: [0, 1, 0], mode: translation,
+     range: {min: 0.0, max: 0.25}, default: 0.0, units: m}

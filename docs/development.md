@@ -69,7 +69,13 @@ root = Path.cwd()
 settings = resolve_settings(cwd=root)
 rows = {}
 with tempfile.TemporaryDirectory() as tmp:
-    for name in ("ash-crowned-tyrant", "ridge-stalker", "chitter-mite"):
+    for name in (
+        "ash-crowned-tyrant",
+        "ridge-stalker",
+        "chitter-mite",
+        "giraffe",
+        "elephant",
+    ):
         out = render(name, settings=settings, out_dir=f"{tmp}/{name}", force=True)
         rows[name] = {
             "glb": hashlib.sha256(out.glb).hexdigest(),
@@ -93,6 +99,23 @@ explicitly:
 uv run beastforge showroom --accept
 uv run beastforge showroom          # must pass immediately afterwards
 ```
+
+## Preset versions
+
+Preset files at `library/parts/<name>/<MAJOR.MINOR.PATCH>.yaml` are immutable
+once published. To change a preset, add a new version file; never edit an
+existing one, because assemblies pin an exact version.
+
+```bash
+uv run beastforge parts                       # every preset version
+uv run beastforge parts organic-leg --json    # one preset's declared facts
+uv run beastforge validate                    # resolves every pinned version
+```
+
+The canonical build digest includes the pinned preset documents, so editing a
+version (which you must not do) changes the output bytes. Adding a new version
+only changes assemblies that pin it. Regenerate goldens when an example
+assembly's pinned preset or recipe changes.
 
 ## Adding a creature
 

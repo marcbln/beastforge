@@ -17,10 +17,10 @@ from typing import Any
 from beastforge import __version__
 from beastforge.config import Settings, find_library_root, find_texforge_library
 from beastforge.export.gltf import TextureImage, build_glb
-from beastforge.export.manifest import build_manifest, manifest_json, ordered_clips
+from beastforge.export.manifest import build_manifest, manifest_json
 from beastforge.library import project_relative, resolve_recipe_path
 from beastforge.model.errors import BeastforgeError, IOFailure
-from beastforge.model.findings import ValidationFinding
+from beastforge.model.findings import CORE_CLIPS, ValidationFinding
 from beastforge.model.loader import load_recipe
 from beastforge.model.manifest import (
     GenerationReport,
@@ -34,6 +34,8 @@ from beastforge.model.manifest import (
 )
 from beastforge.model.recipe import Recipe
 from beastforge.params import parse_set_tokens
+from beastforge.parts.registry import PresetRegistry
+from beastforge.parts.resolve import resolve_parts
 from beastforge.pipeline import BuiltCreature, prepare
 from beastforge.texture.texforge_adapter import TexforgeLibrary, texforge_version
 from beastforge.utils.canonical import canonical_json, sha256_hex
@@ -58,15 +60,22 @@ def output_directory(recipe: Recipe, settings: Settings, out_dir: str | None) ->
     return Path(settings.output_dir) / recipe.meta.name
 
 
-def _inventory(recipe: Recipe) -> ReportInventory:
-    clips = ordered_clips(recipe.clips)
+def _inventory(recipe: Recipe, baked_clips: list) -> ReportInventory:
+    by_name = {clip.name: clip for clip in baked_clips}
+    ordered = [by_name[name] for name in CORE_CLIPS if name in by_name]
+    ordered.extend(
+        sorted(
+            (clip for clip in baked_clips if clip.name not in CORE_CLIPS),
+            key=lambda clip: clip.name,
+        )
+    )
     events: list[ReportInventoryEvent] = []
-    for clip in clips:
+    for clip in recipe.clips:
         for event in clip.events:
             time = event.ticks / 60.0 if event.ticks is not None else float(event.time or 0.0)
             events.append(ReportInventoryEvent(clip=clip.name, time=time, name=event.name))
     return ReportInventory(
-        clips=[clip.name for clip in clips],
+        clips=[clip.name for clip in ordered],
         events=events,
         sockets=[socket.name for socket in recipe.sockets],
         volumes=[volume.name for volume in recipe.volumes],
@@ -93,6 +102,7 @@ def _validation_check(
         mesh=built.mesh,
         manifest=manifest,
         texforge_root=texforge_root,
+        resolved_parts=built.parts,
     )
 
 
@@ -113,14 +123,20 @@ def render(
     label = project_relative(path, cwd=cwd)
     recipe, document = load_recipe(path, recipe_label=label)
     overrides = parse_set_tokens(set_values or [])
+    library_root = find_library_root(settings, cwd=cwd)
+    registry = PresetRegistry.from_library_root(library_root, cwd=cwd)
+    resolution = resolve_parts(recipe, registry, recipe_label=label)
+    resolution_errors = error_findings(resolution.findings)
+    if resolution_errors:
+        raise ValidationFailed(resolution_errors)
     built = prepare(
         recipe,
         document=document,
         recipe_path=label,
         overrides=overrides,
         tool_version=tool_version,
+        resolved_parts=resolution.parts,
     )
-    library_root = find_library_root(settings, cwd=cwd)
     texforge_root = find_texforge_library(settings, library_root=library_root)
     findings = _validation_check(
         built,
@@ -147,7 +163,7 @@ def render(
                 manifest=ReportFile(path=str(manifest_path)),
                 textures=[],
             ),
-            inventory=_inventory(recipe),
+            inventory=_inventory(recipe, built.clips),
             effective_params={key: _scalar(value) for key, value in built.resolved_params.items()},
             provenance=ReportProvenance(
                 recipe=label,
@@ -197,6 +213,7 @@ def render(
             textures=textures,
             tool_version=tool_version,
             texforge_version=texforge_version(),
+            parts=built.parts,
         )
         final_findings = _validation_check(
             built,
@@ -250,7 +267,7 @@ def render(
                     for texture in textures
                 ],
             ),
-            inventory=_inventory(recipe),
+            inventory=_inventory(recipe, built.clips),
             effective_params={key: _scalar(value) for key, value in built.resolved_params.items()},
             provenance=ReportProvenance(
                 recipe=label,

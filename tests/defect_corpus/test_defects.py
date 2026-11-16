@@ -294,11 +294,23 @@ def test_skin_bind_pose_mismatch(built) -> None:
 
 
 def test_surface_winding_and_degenerate_faces(built) -> None:
-    assert "surface-winding-invalid" in _skin_codes(
-        built, lambda mesh: mesh.indices.__setitem__(slice(None), mesh.indices[:, [0, 2, 1]])
+    from beastforge.validation.closure import check_closure
+
+    def closure_codes(mutate) -> list[str]:
+        import copy as copy_module
+
+        mesh = copy_module.deepcopy(built.mesh)
+        mutate(mesh)
+        return [
+            finding.code
+            for finding in check_closure(mesh, recipe_label="broken.yaml")
+        ]
+
+    assert "surface-winding-invalid" in closure_codes(
+        lambda mesh: mesh.indices.__setitem__(slice(None), mesh.indices[:, [0, 2, 1]])
     )
-    assert "surface-self-intersection" in _skin_codes(
-        built, lambda mesh: mesh.positions.__setitem__(1, mesh.positions[0])
+    assert "surface-degenerate" in closure_codes(
+        lambda mesh: mesh.positions.__setitem__(1, mesh.positions[0])
     )
 
 

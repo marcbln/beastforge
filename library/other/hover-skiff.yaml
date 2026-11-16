@@ -1,0 +1,76 @@
+meta:
+  name: hover-skiff
+  description: "A limbless hover craft whose only motion is a rotor's automatic spin."
+  category: other
+  tags: [vehicle, craft, hover]
+  author: beastforge
+  tested_with: "0.1.0"
+  version: "1.0.0"
+
+params: []
+
+budgets: {vertices: 20000, bones: 64, triangles: 60000, max_clip_ticks: 600}
+
+skeleton:
+  root: root
+  bones:
+    - {name: root, parent: null,
+       rest: {translation: [0, 1.1, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: hull-mount, parent: root,
+       rest: {translation: [0, 0, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: wing-left-root, parent: hull-mount,
+       rest: {translation: [0.45, 0.05, 0.1], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: wing-left-tip, parent: wing-left-root,
+       rest: {translation: [0.7, 0, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: wing-right-root, parent: hull-mount,
+       rest: {translation: [-0.45, 0.05, 0.1], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: wing-right-tip, parent: wing-right-root,
+       rest: {translation: [-0.7, 0, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: engine-mount, parent: hull-mount,
+       rest: {translation: [0, -0.05, 0.55], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+    - {name: rotor-mount, parent: hull-mount,
+       rest: {translation: [0, 0.35, 0.2], rotation: [0, 0, 0, 1], scale: [1, 1, 1]}}
+  chains:
+    - {name: left-wing, bones: [wing-left-root, wing-left-tip]}
+    - {name: right-wing, bones: [wing-right-root, wing-right-tip]}
+
+surfaces: []
+
+parts:
+  - name: hull
+    preset: vehicle-hull-panel
+    preset_version: "1.0.0"
+    bind: {mount: hull-mount}
+    overrides: {scale-x: 1.6, scale-y: 0.35, scale-z: 2.4}
+    material: chitin
+  - name: left-wing
+    preset: vehicle-wing
+    preset_version: "1.0.0"
+    bind: {root: wing-left-root, tip: wing-left-tip}
+    material: chitin
+  - name: right-wing
+    preset: vehicle-wing
+    preset_version: "1.0.0"
+    bind: {root: wing-right-root, tip: wing-right-tip}
+    material: chitin
+  - name: engine
+    preset: vehicle-engine-bell
+    preset_version: "1.0.0"
+    bind: {mount: engine-mount}
+    material: chitin
+  - name: rotor
+    preset: vehicle-rotor
+    preset_version: "1.0.0"
+    bind: {mount: rotor-mount}
+    material: chitin
+
+materials:
+  - {name: chitin, texture: brushed-steel, params: {seed: 5}, size: 256x256,
+     metallic: 0.5, roughness: 0.4}
+
+clips: []
+
+sockets: []
+
+volumes:
+  - {name: hull, role: hit, center: [0, 1.1, 0.1], extents: [0.9, 0.35, 1.3]}
